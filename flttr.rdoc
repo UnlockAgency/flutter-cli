@@ -1,0 +1,5 @@
+= flttr
+
+Generate this with
+    flttr _doc
+After you have described your command line interface

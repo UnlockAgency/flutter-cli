@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+require 'gli'
+begin # XXX: Remove this begin/rescue before distributing your app
+require 'flttr'
+rescue LoadError
+  STDERR.puts "In development, you need to use `bundle exec bin/flttr` to run your app"
+  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
+  STDERR.puts "Feel free to remove this message from bin/flttr now"
+  exit 64
+end
+
+class App
+  extend GLI::App
+
+  program_desc 'An Unlock wrapper arround the flutter CLI'
+
+  version Flttr::VERSION
+
+  subcommand_option_handling :normal
+  arguments :strict
+
+  desc 'Verbose logging'
+  switch [:v,:verbose]
+
+  desc 'Run on a device or simulator'
+  command :run do |c|
+    c.switch [:r,:release], 
+      :desc => 'Run in release mode, debug by default'
+
+    c.flag [:p,:platform], 
+      :desc => 'Specify platform, android or ios', 
+      :must_match => ["android", "ios"],
+      :required => true
+
+    c.flag [:f,:flavor], 
+      :desc => 'Specify flavor: [test, accept, production, release]', 
+      :must_match => ["test", "accept", "production", "release"],
+      :default_value => "release"
+
+    c.action do |global_options,options,args|
+      Commands::Run.new(global_options.merge(options)).execute
+    end
+  end
+
+  desc 'Build the app'
+  command :build do |c|
+    c.switch [:r,:release], 
+      :desc => 'Run in release mode, debug by default'
+
+    c.flag [:p,:platform], 
+      :desc => 'Specify platform, android or ios', 
+      :must_match => ["android", "ios"],
+      :required => true
+
+    c.flag [:a,:artifact], 
+      :desc => 'Artifact type, required for android', 
+      :must_match => ["apk", "appbundle"],
+      :default_value => "apk"
+
+    c.flag [:f,:flavor], 
+      :desc => 'Specify flavor: [test, accept, production, release]', 
+      :must_match => ["test", "accept", "production", "release"],
+      :default_value => "release"
+
+    c.action do |global_options,options,args|
+      Commands::Build.new(global_options.merge(options)).execute
+    end
+  end
+
+  desc 'Describe create here'
+  arg_name 'Describe arguments to create here'
+  command :create do |c|
+    c.action do |global_options,options,args|
+      puts "create command ran"
+    end
+  end
+
+  pre do |global,command,options,args|
+    # Pre logic here
+    # Return true to proceed; false to abort and not call the
+    # chosen command
+    # Use skips_pre before a command to skip this block
+    # on that command only
+    true
+  end
+
+  post do |global,command,options,args|
+    # Post logic here
+    # Use skips_post before a command to skip this
+    # block on that command only
+  end
+
+  on_error do |exception|
+    # Error logic here
+    # return false to skip default error handling
+    true
+  end
+end
+
+exit App.run(ARGV)
