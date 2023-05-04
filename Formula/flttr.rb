@@ -5,7 +5,7 @@ class Flttr < Formula
         # or tag: "1_0_release", revision: "090930930295adslfknsdfsdaffnasd13"
         # or revision: "090930930295adslfknsdfsdaffnasd13"
 
-    version "0.1.0"
+    version "0.1.1"
     
     def install
         bin.install "RUBYLIB=lib bin/flttr"
