@@ -8,7 +8,7 @@ class Flttr < Formula
     version "0.1.0"
     
     def install
-        bin.install "bin/flttr"
+        bin.install "RUBYLIB=lib bin/flttr"
     end
   
     test do
