@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'json'
 
 module Commands
     class Upgrade
@@ -7,12 +8,24 @@ module Commands
         end
 
         def execute
+            # Try to find the latest release on Github
+            puts "[:] Looking for the latest release.."
+
+            response = JSON.load(URI.open('https://api.github.com/repos/UnlockAgency/flutter-cli/releases/latest'))
+            downloadUrl = response['assets']&.select { |a| a['browser_download_url'].end_with?('.gem') }&.map { |a| a['browser_download_url'] }&.first
+
+            unless downloadUrl
+                warn "\n[!] Unable to locate download url from response"
+                return
+            end
+
+            puts " - Found: #{downloadUrl}"
+
+            puts "\n[:] Downloading.."
+
             filename = 'flttr-latest.gem'
-
-            puts "[:] Downloading latest release from: https://github.com/UnlockAgency/flutter-cli/raw/master/releases/#{filename}"
-
             open(filename, 'wb') do |file|
-                file << URI.open("https://github.com/UnlockAgency/flutter-cli/raw/master/releases/#{filename}").read
+                file << URI.open(downloadUrl).read
             end
 
             puts "\n[:] Finished download, installing.."
