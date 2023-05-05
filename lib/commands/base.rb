@@ -25,10 +25,10 @@ module Commands
 
             copy_configuration_files
 
-            write_build_config
+            buildConfig = write_build_config
 
             if @platform == "ios"
-                update_xcconfig
+                update_xcconfig(buildConfig)
             end
         end
 
@@ -68,7 +68,7 @@ module Commands
                 buildConfig = {}
             end
 
-            platformConfigFileName = "config/#{platform}/#{@flavor}.json"
+            platformConfigFileName = "config/#{@platform}/#{@flavor}.json"
 
             begin
                 # Open signing configuration
@@ -100,9 +100,11 @@ module Commands
             File.open('./config/.build.json', 'w') do |file|
                 file.write(JSON.dump(buildConfig))
             end
+
+            return buildConfig
         end
 
-        def update_xcconfig
+        def update_xcconfig(buildConfig)
             # Before running the build, we are updating values inside Generated.xcconfig.
             # Flutter is also doing this later when running the build script, but some values are then representing the old ones.
             # We need specific values to be updated before starting flutters own build script.
