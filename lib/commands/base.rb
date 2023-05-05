@@ -52,9 +52,9 @@ module Commands
                 for key in filesToCopy.keys
                     fileToCopy = filesToCopy[key]
 
-                    if fileToCopy.key?(options[:flavor])
-                        puts " - Copying #{fileToCopy[options[:flavor]]} to #{key}"
-                        FileUtils.cp(fileToCopy[options[:flavor]], key)
+                    if fileToCopy.key?(:flavor)
+                        puts " - Copying #{fileToCopy[:flavor]} to #{key}"
+                        FileUtils.cp(fileToCopy[:flavor], key)
                     end
                 end
             end
