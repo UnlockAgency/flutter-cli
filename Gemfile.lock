@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flttr (0.1.0)
+    flttr (0.1.1)
       gli (~> 2.21.0)
 
 GEM

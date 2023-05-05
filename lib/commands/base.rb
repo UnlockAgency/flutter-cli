@@ -27,7 +27,7 @@ module Commands
 
             write_build_config
 
-            if :platform == "ios"
+            if @platform == "ios"
                 update_xcconfig
             end
         end
@@ -53,8 +53,8 @@ module Commands
                     fileToCopy = filesToCopy[key]
 
                     if fileToCopy.key?(:flavor)
-                        puts " - Copying #{fileToCopy[:flavor]} to #{key}"
-                        FileUtils.cp(fileToCopy[:flavor], key)
+                        puts " - Copying #{fileToCopy[@flavor]} to #{key}"
+                        FileUtils.cp(fileToCopy[@flavor], key)
                     end
                 end
             end
@@ -63,12 +63,12 @@ module Commands
         def write_build_config
             begin
                 # Build a .build.json file
-                buildConfig = JSON.load(File.open("config/#{flavor}.json"))
+                buildConfig = JSON.load(File.open("config/#{@flavor}.json"))
             rescue
                 buildConfig = {}
             end
 
-            platformConfigFileName = "config/#{platform}/#{flavor}.json"
+            platformConfigFileName = "config/#{platform}/#{@flavor}.json"
 
             begin
                 # Open signing configuration
@@ -78,9 +78,9 @@ module Commands
                 platformConfigAll = {}
             end
 
-            if :platform == "ios"
+            if @platform == "ios"
                 platformConfig = platformConfigAll["default"] || {}
-                platformConfig = platformConfig.merge(:release ? platformConfigAll["release"] || {} : platformConfigAll["debug"] || {})
+                platformConfig = platformConfig.merge(@release ? platformConfigAll["release"] || {} : platformConfigAll["debug"] || {})
 
                 if :verbose
                     puts colored :blue, "\n[:] Loaded platform config, combining it to the default config"
@@ -89,7 +89,7 @@ module Commands
                 
                 buildConfig = buildConfig.merge(platformConfig)
             else
-                if :verbose
+                if @verbose
                     puts colored :blue, "\n[:] Loaded platform config, combining it to the default config"
                     pp platformConfigAll
                 end
