@@ -1,4 +1,4 @@
-require 'net/http'
+require 'open-uri'
 
 module Commands
     class Upgrade
@@ -7,14 +7,25 @@ module Commands
         end
 
         def execute
-            # https://github.com/UnlockAgency/flutter-cli/raw/master/releases/flttr-0.0.1.gem
+            filename = 'flttr-latest.gem'
 
-            Net::HTTP.start("github.com") do |http|
-                resp = http.get("/UnlockAgency/flutter-cli/raw/master/releases/flttr-latest.gem")
-                open("flttr-latest.gem", "wb") do |file|
-                    file.write(resp.body)
-                end
+            puts "[:] Downloading latest release from: https://github.com/UnlockAgency/flutter-cli/raw/master/releases/#{filename}"
+
+            open(filename, 'wb') do |file|
+                file << URI.open("https://github.com/UnlockAgency/flutter-cli/raw/master/releases/#{filename}").read
             end
+
+            puts "\n[:] Finished download, installing.."
+            puts " - gem install flttr-latest.gem"
+
+            system("gem install '#{filename}'")
+
+            # Remove the downloaded file again
+            puts "\n[:] Deleting #{filename}"
+            File.delete(filename) if File.exist?(filename)
+
+            puts "\n[:] Done! You're current version:"
+            system("flttr --version")
         end
     end
 end
