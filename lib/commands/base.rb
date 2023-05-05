@@ -5,7 +5,7 @@ require 'fileutils'
 
 module Commands
     class Base   
-        attr_accessor :verbose, :platform, :flavor, :release
+        attr_accessor :verbose, :platform, :flavor, :release    
 
         def initialize(args)
             @verbose = args[:verbose]
@@ -15,6 +15,12 @@ module Commands
         end
 
         def execute
+            # Check if the directory contains a pubspec.yaml file, which is required for a Flutter project.
+            unless File.exist? "pubspec.yaml"
+                warn colored :red, " [!] The directory doesn't contain a pubspec.yaml, make sure to run this command inside a Flutter project. " 
+                exit
+            end
+
             prepare_dir
 
             copy_configuration_files
@@ -38,7 +44,7 @@ module Commands
                 configuration = {}
             end
 
-            puts "\n[:] Copying configuration files"
+            puts colored :blue, "\n[:] Copying configuration files"
 
             if configuration.key?('files')
                 filesToCopy = configuration['files']
@@ -68,7 +74,7 @@ module Commands
                 # Open signing configuration
                 platformConfigAll = JSON.load(File.open(platformConfigFileName))
             rescue
-                puts "\n[!] File #{platformConfigFileName} does not exist, falling back to default {}\n\n"
+                warn colored :red, "\n[!] File #{platformConfigFileName} does not exist, falling back to default {}\n\n"
                 platformConfigAll = {}
             end
 
@@ -77,14 +83,14 @@ module Commands
                 platformConfig = platformConfig.merge(:release ? platformConfigAll["release"] || {} : platformConfigAll["debug"] || {})
 
                 if :verbose
-                    puts "\n[:] Loaded platform config, combining it to the default config"
+                    puts colored :blue, "\n[:] Loaded platform config, combining it to the default config"
                     pp platformConfig
                 end
                 
                 buildConfig = buildConfig.merge(platformConfig)
             else
                 if :verbose
-                    puts "\n[:] Loaded platform config, combining it to the default config"
+                    puts colored :blue, "\n[:] Loaded platform config, combining it to the default config"
                     pp platformConfigAll
                 end
 
@@ -121,7 +127,7 @@ module Commands
             end
 
             if :verbose
-                puts "\n[:] Writing to Generated.xcconfig"
+                puts colored :blue, "\n[:] Writing to Generated.xcconfig"
             end
 
             # Now print all lines back into Generated.xcconfig
