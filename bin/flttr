@@ -102,12 +102,15 @@ class App
 
   pre do |global,command,options,args|
 
+    Settings.refresh
+
     unless command.name_for_help != 'update'
       return true
     end
 
     # Version check
     if Settings.get('version_check', true) == true
+      puts "updating checks"
       Updater.check
     end
 

@@ -44,7 +44,7 @@ class Updater
         puts colored :blue, "\n[:] Deleting #{filename}"
         File.delete(filename) if File.exist?(filename)
 
-        puts colored :green, "\n[:] Done! You're current version:"
+        puts colored :green, "\n[:] Done! Your current version:"
         system("flttr --version")
     end    
 end

@@ -1,12 +1,18 @@
 class Settings
     @@config = nil
 
+    @@configDirectory = "#{Dir.home}/.flttr"
+
     def self.refresh
-        unless File.exist? '.config.yaml'
-            FileUtils.touch('.config.yaml')
+        Dir.mkdir @@configDirectory unless File.exist? @@configDirectory
+
+        unless File.exist? "#{@@configDirectory}/config.yaml"
+            FileUtils.touch("#{@@configDirectory}/config.yaml")
         end
 
-        @@config = YAML.load_file('.config.yaml') || {}
+        @@config = YAML.load_file("#{@@configDirectory}/config.yaml") || {}
+
+        puts @@config
     end
 
     def self.load
@@ -18,7 +24,11 @@ class Settings
     def self.get(key, default=nil)
         load
 
-        return @@config[key] || default
+        if @@config[key] == nil
+            return default
+        end
+
+        return @@config[key]
     end
 
     def self.write(key, value)
@@ -26,7 +36,7 @@ class Settings
 
         @@config[key] = value
         
-        File.write('.config.yaml', @@config.to_yaml)
+        File.write("#{@@configDirectory}/config.yaml", @@config.to_yaml)
     end
 
     def self.update(hash)
@@ -36,7 +46,7 @@ class Settings
         
         @@config = @@config.merge(hash)
 
-        File.write('.config.yaml', @@config.to_yaml)
+        File.write("#{@@configDirectory}/config.yaml", @@config.to_yaml)
     end
 
     def self.all
