@@ -2,6 +2,16 @@
 
 Flutter provides commands to run and build the app on simulators or devices. We've created a wrapper, which also configures our project for the right flavor and build settings.
 
+1. [Getting started](#getting-started)
+1. [Roadmap](#roadmap)
+1. [Usage](#usage)
+1. [Configuration](#configuration)
+1. [Run](#run)
+1. [Build](#build)
+1. [Upgrade](#upgrade)
+1. [Development](#development)
+1. [Troubleshooting](#troubleshooting)
+
 ## Getting started
 
 Go to the [latest release](https://github.com/UnlockAgency/flutter-cli/releases/latest) on Github and download the .gem file listed there. 
@@ -45,7 +55,7 @@ SYNOPSIS
     flttr [global options] command [command options] [arguments...]
 
 VERSION
-    0.1.0
+    0.1.2
 
 GLOBAL OPTIONS
     --help             - Show this message
@@ -54,6 +64,7 @@ GLOBAL OPTIONS
 
 COMMANDS
     build   - Build the app
+    config  - Configure the Flttr CLI
     help    - Shows a list of commands or help for one command
     run     - Run on a device or simulator
     upgrade - Upgrade Flttr
@@ -63,12 +74,23 @@ Shows the commands that you're able to run:
 
 ```
 flttr help
+flttr config [--help]
 flttr run [--help]
 flttr build [--help]
 flttr upgrade [--help]
 ```
 
-### Run
+## Configuration
+
+By default, flttr does a version check when executing any command. It then checks for any newer version at the Github releases overview. If an upgrade is available, you'll be notified. Upgrading is a manual step you need to do yourself: `flttr upgrade`. 
+
+If you wish to disable the version check before running the commands, update your config: 
+
+```
+flttr config --version-check=false
+```
+
+## Run
 
 ```
 <flavor> = test, accept, production, release
@@ -125,7 +147,9 @@ When you're done, upgrade the version of the package at `lib/flttr/version.rb` a
 After, commiting, run `gem build` in the root of the repository. It'll create a file like `flttr-{version}.gem`. This file won't be committed into version control. 
 
 ### Create new version
-The latest version won't be automatically available to everyone. You'll need to create a new release at Github and mark it as the "latest". Include `*.gem` file you created during build in this release. It doesn't matter what the name of the file is.
+The latest version won't be automatically available to everyone. You'll need to create a new release at Github and mark it as the "latest". **It's important** that you name the release like: "v1.1.0". 
+
+Include the `*.gem` file you created during build in this release. It doesn't matter what the name of the file is.
 
 ### Upgrading
 When running `flttr upgrade`, the latest version will be available for everyone. The command will automatically fetch the `*.gem` file you've uploaded with the release tag.

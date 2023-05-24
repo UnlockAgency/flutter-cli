@@ -1,5 +1,5 @@
 module Commands
-    class Run < Commands::Base
+    class Run < Commands::Buildable
 
         def initialize(args)
             super 

@@ -4,7 +4,7 @@ require 'yaml'
 require 'fileutils'
 
 module Commands
-    class Base   
+    class Buildable   
         attr_accessor :verbose, :platform, :flavor, :release    
 
         def initialize(args)

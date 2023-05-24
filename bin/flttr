@@ -37,6 +37,17 @@ class App
   desc 'Verbose logging'
   switch [:v,:verbose]
 
+  desc 'Configure the Flttr CLI'
+  command :config do |c|
+    c.flag ['version-check'], 
+      :desc => 'Enable or disable the version check: true or false', 
+      :must_match => ['true', 'false']
+
+    c.action do |global_options,options,args|
+      Commands::Config.new(global_options.merge(options)).execute
+    end
+  end
+
   desc 'Run on a device or simulator'
   command :run do |c|
     c.switch [:r,:release], 
@@ -90,11 +101,16 @@ class App
   end
 
   pre do |global,command,options,args|
-    # Pre logic here
-    # Return true to proceed; false to abort and not call the
-    # chosen command
-    # Use skips_pre before a command to skip this block
-    # on that command only
+
+    unless command.name_for_help != 'update'
+      return true
+    end
+
+    # Version check
+    if Settings.get('version_check', true) == true
+      Updater.check
+    end
+
     true
   end
 

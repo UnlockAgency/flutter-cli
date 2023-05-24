@@ -1,5 +1,5 @@
 module Commands
-    class Build < Commands::Base
+    class Build < Commands::Buildable
         attr_accessor :artifact
 
         def initialize(args)
