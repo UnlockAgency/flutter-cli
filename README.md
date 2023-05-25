@@ -66,6 +66,7 @@ COMMANDS
     build   - Build the app
     config  - Configure the Flttr CLI
     help    - Shows a list of commands or help for one command
+    init    - Init a Flutter project for flavored configuration
     run     - Run on a device or simulator
     upgrade - Upgrade Flttr
 ```
@@ -74,10 +75,19 @@ Shows the commands that you're able to run:
 
 ```
 flttr help
+flttr init [--help]
 flttr config [--help]
 flttr run [--help]
 flttr build [--help]
 flttr upgrade [--help]
+```
+
+## Init
+
+When installing a new Flutter project, you need to add the config/ directory and it's subfiles to be able to use flavors. Flttr provides an `init` command to create this directory for you and create the necessary files.
+
+```
+flttr init
 ```
 
 ## Configuration
