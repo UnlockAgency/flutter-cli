@@ -1,13 +1,14 @@
 PATH
   remote: .
   specs:
-    flttr (1.0.0)
+    flttr (1.0.1)
       gli (~> 2.21.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     gli (2.21.0)
+    jwt (2.7.0)
     minitest (5.18.0)
     rake (0.9.6)
     rdoc (4.3.0)
@@ -17,6 +18,7 @@ PLATFORMS
 
 DEPENDENCIES
   flttr!
+  jwt (>= 2.7.0)
   minitest (~> 5.14)
   rake (~> 0.9.2)
   rdoc (~> 4.3)

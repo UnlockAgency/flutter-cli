@@ -104,13 +104,12 @@ class App
 
     Settings.refresh
 
-    unless command.name_for_help != 'update'
-      return true
+    commandName = command.name_for_help.first
+    if commandName == 'upgrade'
+      true
     end
 
-    # Version check
     if Settings.get('version_check', true) == true
-      puts "updating checks"
       Updater.check
     end
 

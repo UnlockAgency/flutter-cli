@@ -9,7 +9,7 @@ module Commands
 
         def execute
             # Try to find the latest release on Github
-            upToDate = Updater.check
+            upToDate = Updater.check(true)
 
             if upToDate
                 puts colored :green, 'You are already up to date!'

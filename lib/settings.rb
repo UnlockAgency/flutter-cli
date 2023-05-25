@@ -11,8 +11,6 @@ class Settings
         end
 
         @@config = YAML.load_file("#{@@configDirectory}/config.yaml") || {}
-
-        puts @@config
     end
 
     def self.load
