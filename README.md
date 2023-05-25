@@ -5,6 +5,7 @@ Flutter provides commands to run and build the app on simulators or devices. We'
 1. [Getting started](#getting-started)
 1. [Roadmap](#roadmap)
 1. [Usage](#usage)
+1. [Init](#init)
 1. [Configuration](#configuration)
 1. [Run](#run)
 1. [Build](#build)
@@ -28,10 +29,6 @@ gem install flttr-{version}.gem
 The CLI is now installed globally on your system. You can remove the downloaded file again.
 
 ## Roadmap
-
-`flttr init`
-
-Initializing the directory for usage with flavored config files.
 
 `flttr create {project_name}`
 
