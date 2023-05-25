@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    flttr (1.0.1)
+    flttr (1.0.2)
       gli (~> 2.21.0)
+      jwt (~> 2.7.0)
 
 GEM
   remote: https://rubygems.org/

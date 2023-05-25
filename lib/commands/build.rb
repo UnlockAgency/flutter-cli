@@ -17,8 +17,8 @@ module Commands
             command = "flutter #{mode} --target=lib/main.dart --dart-define-from-file=config/.build.json"
             command += @release ? " --release #{@platform == "ios" ? "--no-codesign" : ""}" : ""
 
-            puts colored :blue, "\n[:] Building app for flavor: #{@flavor}"
-            puts colored :green, "[:] #{command}\n\n"
+            puts colored :blue, "\n#{CHAR_FLAG} Building app for flavor: #{@flavor}"
+            puts colored :green, "#{command}\n\n"
 
             exec(command)
         end

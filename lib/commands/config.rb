@@ -11,14 +11,17 @@ module Commands
         end
 
         def execute
-            puts colored :blue, "[:] Updating your configuration preferences.."
+            puts colored :blue, "#{CHAR_FLAG} Updating your configuration preferences.."
 
             config = Settings.all
 
             if @version_check != nil
-                puts " - Updating version-check to #{version_check == 'true'}"
+                puts colored :default, "#{CHAR_VERBOSE} Updating version-check to #{version_check == 'true'}" unless !$verbose
                 config['version_check'] = version_check == 'true'
             end
+
+            puts colored :default, "\n#{CHAR_VERBOSE} Writing updates to settings" unless !$verbose
+            pp config unless !$verbose
 
             Settings.update(config)
         end

@@ -1,0 +1,14 @@
+{
+    "default": {
+        "PRODUCT_BUNDLE_IDENTIFIER": "",
+        "DEVELOPMENT_TEAM": ""
+    },
+    "debug": {
+        "PROVISIONING_PROFILE_SPECIFIER": "",
+        "CODE_SIGN_IDENTITY": ""
+    },
+    "release": {
+        "PROVISIONING_PROFILE_SPECIFIER": "",
+        "CODE_SIGN_IDENTITY": ""
+    }
+}

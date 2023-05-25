@@ -9,14 +9,14 @@ module Commands
 
         def execute
             # Try to find the latest release on Github
-            upToDate = Updater.check(true)
+            newVersion = Updater.check(true)
 
-            if upToDate
-                puts colored :green, 'You are already up to date!'
+            if newVersion != nil
+                puts colored :green, "#{CHAR_CHECK} You are already up to date!"
                 return
             end
 
-            Updater.update
+            Updater.update(newVersion)
         end
     end
 end

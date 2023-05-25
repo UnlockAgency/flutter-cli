@@ -2,6 +2,12 @@
 require 'gli'
 require 'flttr'
 
+CHAR_ERROR = "\u274c"
+CHAR_WARNING = "\u25b2"
+CHAR_CHECK = "\u2714"
+CHAR_VERBOSE = "\u2139"
+CHAR_FLAG = "\u2691"
+
 COLOR_ESCAPES = {
   :none => 0,
   :bright => 1,
@@ -24,6 +30,9 @@ def coloredBackground( clr, text = nil )
   "\x1B[" + ( ( COLOR_ESCAPES[ clr ] || 0 ) + 10 ).to_s + 'm' + ( text ?  text + "\x1B[0m" : "" )
 end
 
+# Global variables
+$verbose = false
+
 class App
   extend GLI::App
 
@@ -45,6 +54,13 @@ class App
 
     c.action do |global_options,options,args|
       Commands::Config.new(global_options.merge(options)).execute
+    end
+  end
+
+  desc 'Init a Flutter project for flavored configuration'
+  command :init do |c|
+    c.action do |global_options,options,args|
+      Commands::Init.new(global_options.merge(options)).execute
     end
   end
 
@@ -102,14 +118,13 @@ class App
 
   pre do |global,command,options,args|
 
+    # Set verbose logging
+    $verbose = global[:verbose]
+
     Settings.refresh
 
     commandName = command.name_for_help.first
-    if commandName == 'upgrade'
-      true
-    end
-
-    if Settings.get('version_check', true) == true
+    if Settings.get('version_check', true) == true && commandName != 'upgrade'
       Updater.check
     end
 
