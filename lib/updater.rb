@@ -33,7 +33,7 @@ class Updater
             puts colored :yellow, " Run flttr upgrade to install it\n"
         end
 
-        return Gem::Version.new(Flttr::VERSION) >= Gem::Version.new(releaseName) ? response : nil
+        return Gem::Version.new(Flttr::VERSION) < Gem::Version.new(releaseName) ? response : nil
     end
 
     def self.update(newVersion)
