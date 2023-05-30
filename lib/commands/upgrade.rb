@@ -11,7 +11,7 @@ module Commands
             # Try to find the latest release on Github
             newVersion = Updater.check(true)
 
-            if newVersion != nil
+            if newVersion == nil
                 puts colored :green, "#{CHAR_CHECK} You are already up to date!"
                 return
             end
