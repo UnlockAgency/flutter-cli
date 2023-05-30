@@ -17,7 +17,7 @@ module Commands
             # Check if the directory contains a pubspec.yaml file, which is required for a Flutter project.
             unless File.exist? "pubspec.yaml"
                 warn colored :red, "#{CHAR_ERROR} The directory doesn't contain a pubspec.yaml, make sure to run this command inside a Flutter project. " 
-                # exit
+                exit
             end
 
             prepare_dir
@@ -32,7 +32,7 @@ module Commands
         end
 
         def prepare_dir
-            puts colored :default, "\n#{CHAR_VERBOSE} Checking for existence of config/ dir" unless !$verbose
+            puts colored :default, "#{CHAR_VERBOSE} Checking for existence of config/ dir" unless !$verbose
 
             # Creating config directory if it doesn't exist
             Dir.mkdir "config" unless File.exist? "config"
@@ -40,33 +40,57 @@ module Commands
 
         def copy_configuration_files
             begin
-                puts colored :default, "\n#{CHAR_VERBOSE} Loading config/.config.yaml contents" unless !$verbose
+                puts colored :default, "#{CHAR_VERBOSE} Loading config/.config.yaml contents" unless !$verbose
                 configuration = YAML.load_file('config/.config.yaml')
             rescue
                 warn colored :yellow, "\n#{CHAR_WARNING} File config/config.yaml doesn\'t exist, using empty configuration: {}"
-                configuration = {}
+                configuration = {"android" => {}, "ios" => {}}
             end
 
-            puts colored :blue, "\n#{CHAR_CHECK} Copying configuration files"
+            unless configuration.key?(@platform)
+                warn colored :red, <<-TEXT
+#{CHAR_ERROR} File config/config.yaml doesn\'t support platform specific configuration
+  You have to specify configuration per platform, like:
+
+  "android":
+    "files":
+      "path/to/new_file"
+        release: "path/to/copyable_file"
+        
+  "ios":
+    "files":
+      "path/to/new_file"
+        release: "path/to/copyable_file"
+TEXT
+                exit
+            end
 
             if configuration.key?('files')
+                puts colored :blue, "\n#{CHAR_FLAG} Copying configuration files"
+                numberOfCopiedFiles = 0
                 filesToCopy = configuration['files']
 
                 for key in filesToCopy.keys
                     fileToCopy = filesToCopy[key]
 
-                    if fileToCopy.key?(:flavor)
-                        puts " - Copying #{fileToCopy[@flavor]} to #{key}"
+                    if fileToCopy.key?(@flavor)
+                        puts colored :default, "Copying #{fileToCopy[@flavor]} to #{key}" 
                         FileUtils.cp(fileToCopy[@flavor], key)
+
+                        numberOfCopiedFiles += 1
                     end
                 end
+
+                puts colored :green, "\n#{CHAR_CHECK} Copied #{numberOfCopiedFiles} file(s)"
+            else
+                puts colored :blue, "\n#{CHAR_FLAG} No configuration files to copy"
             end
         end
 
         def write_build_config
             begin
                 # Build a .build.json file
-                puts colored :default, "\n#{CHAR_VERBOSE} Loading config/#{@flavor}.json" unless !$verbose
+                puts colored :default, "#{CHAR_VERBOSE} Loading config/#{@flavor}.json" unless !$verbose
                 buildConfig = JSON.load(File.open("config/#{@flavor}.json"))
             rescue
                 warn colored :yellow, "\n#{CHAR_WARNING} File config/#{@flavor}.json doesn't exit, using empty configuration: {}" 
@@ -77,7 +101,7 @@ module Commands
 
             begin
                 # Open signing configuration
-                puts colored :default, "\n#{CHAR_VERBOSE} Loading #{platformConfigFileName}" unless !$verbose
+                puts colored :default, "#{CHAR_VERBOSE} Loading #{platformConfigFileName}" unless !$verbose
                 platformConfigAll = JSON.load(File.open(platformConfigFileName))
             rescue
                 warn colored :yellow, "\n#{CHAR_WARNING} File #{platformConfigFileName} does not exist, using empty configuration: {}"
@@ -126,7 +150,7 @@ module Commands
 
             generatedXcodeConfig = {}
 
-            puts colored :default, "\n#{CHAR_VERBOSE} Loading the values from #{xcconfigFileName}" unless !$verbose
+            puts colored :default, "#{CHAR_VERBOSE} Loading the values from #{xcconfigFileName}" unless !$verbose
 
             if File.exist?(xcconfigFileName)
                 File.open(xcconfigFileName) do |file|
@@ -137,21 +161,21 @@ module Commands
                 end
             end
 
-            puts colored :default, "\n#{CHAR_VERBOSE} Overriding the values in Generated.xcconfig to the build configuration" unless !$verbose
+            puts colored :default, "#{CHAR_VERBOSE} Overriding the values in Generated.xcconfig to the build configuration" unless !$verbose
 
             # Now overwrite the existing keys with our noewly created buildConfig
             for key in buildConfig.keys
                 generatedXcodeConfig[key] = buildConfig[key]
             end
 
-            puts colored :blue, "\n#{CHAR_FLAG} Writing to Generated.xcconfig" unless !$verbose±
+            puts colored :blue, "\n#{CHAR_FLAG} Writing to Generated.xcconfig"
 
             # Now print all lines back into Generated.xcconfig
             File.open(xcconfigFileName, "w") do |file|
                 for key in generatedXcodeConfig.keys
                     line = "#{key}#{key.start_with?("//") ? "" : "=#{generatedXcodeConfig[key]}"}"
 
-                    puts colored :default, "\n#{CHAR_VERBOSE} Writing into Generated.xcconfig: #{line}" unless !$verbose
+                    puts colored :default, "#{CHAR_VERBOSE} Writing into Generated.xcconfig: #{line}" unless !$verbose
 
                     file.write "#{line}\n"
                 end

@@ -64,6 +64,15 @@ class App
     end
   end
 
+  # desc 'Import data into the project, like translations'
+  # command :import do |c|
+  #   c.command :translations do |sc|
+  #     sc.action do |global_options,options,args|
+  #       Commands::TranslationsImport.new(global_options.merge(options)).execute
+  #     end
+  #   end
+  # end
+
   desc 'Run on a device or simulator'
   command :run do |c|
     c.switch [:r,:release], 
