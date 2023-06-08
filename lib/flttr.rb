@@ -1,4 +1,5 @@
 require 'flttr/version.rb'
+require 'commands/create.rb'
 require 'commands/buildable.rb'
 require 'commands/run.rb'
 require 'commands/build.rb'

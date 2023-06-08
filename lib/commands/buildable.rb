@@ -27,6 +27,11 @@ module Commands
             buildConfig = write_build_config
 
             if @platform == "ios"
+                # Update the signing certificate
+                if buildConfig.key?('CODE_SIGN_IDENTITY')
+                    update_ios_signing_certificate(buildConfig['CODE_SIGN_IDENTITY'])
+                end
+
                 update_xcconfig(buildConfig)
             end
         end
@@ -180,6 +185,38 @@ TEXT
                     file.write "#{line}\n"
                 end
             end
+        end
+
+        def update_ios_signing_certificate(newValue)
+            fileLocation = "#{Dir.home}/.flutter_settings"
+
+            puts colored :blue, "\n#{CHAR_FLAG} Updating code signing identity to: #{newValue}"
+
+            begin
+                # Open signing configuration
+                puts colored :default, "#{CHAR_VERBOSE} Opening Flutter settings file at: #{fileLocation}" unless !$verbose
+                flutterSettings = JSON.load(File.open(fileLocation))
+
+                # Create a backup of the file if it doesn't exist
+                unless File.exist?("#{fileLocation}.bak")
+                    puts colored :default, "#{CHAR_VERBOSE} Creating backup file: #{fileLocation}.bak" unless !$verbose
+
+                    File.open("#{fileLocation}.bak", 'w') do |file|
+                        file.write(JSON.dump(flutterSettings))
+                    end
+                end
+            rescue
+                warn colored :yellow, "\n#{CHAR_WARNING} Flutter settings file at: #{fileLocation} does not exist, using empty configuration: {}"
+                flutterSettings = {}
+            end
+
+            flutterSettings['ios-signing-cert'] = newValue
+
+            File.open(fileLocation, 'w') do |file|
+                file.write(JSON.dump(flutterSettings))
+            end
+
+            puts colored :green, "\n#{CHAR_CHECK} Updated flutter settings"
         end
     end
 end
