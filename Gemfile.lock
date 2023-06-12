@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flttr (1.2.0)
+    flttr (1.3.0)
       dotenv
       gli (~> 2.21.0)
       highline (~> 2.0.0)

@@ -63,6 +63,7 @@ COMMANDS
     build   - Build the app
     config  - Configure the Flttr CLI
     help    - Shows a list of commands or help for one command
+    import  - Import data into the project, like translations
     init    - Init a Flutter project for flavored configuration
     run     - Run on a device or simulator
     upgrade - Upgrade Flttr
@@ -73,6 +74,7 @@ Shows the commands that you're able to run:
 ```
 flttr help
 flttr init [--help]
+flttr import [--help]
 flttr config [--help]
 flttr run [--help]
 flttr build [--help]
@@ -85,6 +87,14 @@ When installing a new Flutter project, you need to add the config/ directory and
 
 ```
 flttr init
+```
+
+## Import
+
+We've built an integration with the Prontalize API to easily import the translations from their API into the project. Before running the command, make sure you've added a `.env` file which contains the `PRONTALIZE_API_KEY` and `PRONTALIZE_PROJECT_ID`.
+
+```
+flttr import translations
 ```
 
 ## Configuration
