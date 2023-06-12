@@ -21,4 +21,5 @@ spec = Gem::Specification.new do |s|
   s.add_runtime_dependency('gli','~> 2.21.0')
   s.add_runtime_dependency('jwt','~> 2.7.0')
   s.add_runtime_dependency('highline','~> 2.0.0')
+  s.add_runtime_dependency('dotenv')
 end

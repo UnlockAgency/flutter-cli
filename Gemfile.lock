@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     flttr (1.2.0)
+      dotenv
       gli (~> 2.21.0)
       highline (~> 2.0.0)
       jwt (~> 2.7.0)
@@ -9,6 +10,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    dotenv (2.8.1)
     gli (2.21.0)
     highline (2.0.3)
     jwt (2.7.1)
@@ -20,6 +22,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dotenv
   flttr!
   highline (>= 2.0.0)
   jwt (>= 2.7.0)

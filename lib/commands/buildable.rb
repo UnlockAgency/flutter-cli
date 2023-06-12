@@ -14,12 +14,7 @@ module Commands
         end
 
         def execute
-            # Check if the directory contains a pubspec.yaml file, which is required for a Flutter project.
-            unless File.exist? "pubspec.yaml"
-                warn colored :red, "#{CHAR_ERROR} The directory doesn't contain a pubspec.yaml, make sure to run this command inside a Flutter project. " 
-                exit
-            end
-
+            
             prepare_dir
 
             copy_configuration_files

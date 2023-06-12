@@ -19,6 +19,9 @@ module Commands
             puts colored :blue, "\n#{CHAR_FLAG} Copying configuration files"
             FileUtils.copy_entry File.join(File.dirname(__FILE__), '../../templates/config'), "config"
 
+            puts colored :blue, "\n#{CHAR_FLAG} Copying default .env"
+            FileUtils.copy_entry File.join(File.dirname(__FILE__), '../../templates/.env.dist'), ".env"
+
             puts colored :green, "#{CHAR_CHECK} Done!"
         end
     end
