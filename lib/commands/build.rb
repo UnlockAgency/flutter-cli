@@ -18,7 +18,7 @@ module Commands
             command += @release ? " --release #{@platform == "ios" ? "--no-codesign" : ""}" : ""
 
             puts colored :blue, "\n#{CHAR_FLAG} Building app for flavor: #{@flavor}"
-            puts colored :green, "#{command}\n\n"
+            puts colored :default, "#{command}\n\n"
 
             exec(command)
         end

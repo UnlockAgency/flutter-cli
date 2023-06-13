@@ -65,10 +65,12 @@ TEXT
                 exit
             end
 
-            if configuration.key?('files')
+            platformConfig = configuration[@platform]
+
+            if platformConfig.key?('files')
                 puts colored :blue, "\n#{CHAR_FLAG} Copying configuration files"
                 numberOfCopiedFiles = 0
-                filesToCopy = configuration['files']
+                filesToCopy = platformConfig['files']
 
                 for key in filesToCopy.keys
                     fileToCopy = filesToCopy[key]
