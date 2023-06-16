@@ -1,5 +1,0 @@
-app_identifier "nl.unlock._PROJECT_NAME_LOWER_CASED_"
-apple_id "tech@unlockagency.nl" # Your Apple email address
-
-team_id "KH7U9B5DS2" # Developer Portal Team ID
-itc_team_id "285184" # iTunes Connect Team ID. `fastlane deliver` and search for the value
