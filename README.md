@@ -28,16 +28,6 @@ gem install flttr-{version}.gem
 
 The CLI is now installed globally on your system. You can remove the downloaded file again.
 
-## Roadmap
-
-`flttr create {project_name}`
-
-Creating a new Flutter project using the Boilerplate
-
-`flttr import {arg}`
-
-Importing for instance translations.
-
 ## Usage
 
 Printing the menu:
@@ -62,6 +52,7 @@ GLOBAL OPTIONS
 COMMANDS
     build   - Build the app
     config  - Configure the Flttr CLI
+    create  - Create a new Flutter project
     help    - Shows a list of commands or help for one command
     import  - Import data into the project, like translations
     init    - Init a Flutter project for flavored configuration
