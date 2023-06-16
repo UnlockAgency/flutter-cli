@@ -26,9 +26,9 @@ class Updater
 
         # Compare versions 
         if !silently && Gem::Version.new(Flttr::VERSION) < Gem::Version.new(releaseName)
-            puts colored :yellow, "---------------------------------------------------------"
+            puts colored :yellow, "+-------------------------------------------------------+"
             puts colored :yellow, "| FLTTR Upgrade available                               |"
-            puts colored :yellow, "---------------------------------------------------------"
+            puts colored :yellow, "+-------------------------------------------------------+"
             puts colored :yellow, " A new version is available for download: #{releaseName}"
             puts colored :yellow, " Run flttr upgrade to install it\n"
         end

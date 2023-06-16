@@ -2,20 +2,25 @@ require 'json'
 require 'pp'
 require 'yaml'
 require 'fileutils'
+require 'tty-prompt'
 
 module Commands
     class Buildable   
-        attr_accessor :platform, :flavor, :release    
+        attr_accessor :platform, :flavor, :release, :configuration
 
         def initialize(args)
             @platform = args[:platform]
             @flavor = args[:flavor]
             @release = args[:release]
+
+            @@prompt = TTY::Prompt.new
         end
 
         def execute
             
             prepare_dir
+
+            load_configuration
 
             copy_configuration_files
 
@@ -38,33 +43,56 @@ module Commands
             Dir.mkdir "config" unless File.exist? "config"
         end
 
-        def copy_configuration_files
+        def load_configuration
             begin
                 puts colored :default, "#{CHAR_VERBOSE} Loading config/.config.yaml contents" unless !$verbose
-                configuration = YAML.load_file('config/.config.yaml')
+                @configuration = YAML.load_file('config/.config.yaml')
             rescue
                 warn colored :yellow, "\n#{CHAR_WARNING} File config/config.yaml doesn\'t exist, using empty configuration: {}"
-                configuration = {"android" => {}, "ios" => {}}
+                @configuration = {"flavors": ["test", "accept", "production", "release"], "android" => {}, "ios" => {}}
             end
 
-            unless configuration.key?(@platform)
+            unless @configuration.key?(@platform)
                 warn colored :red, <<-TEXT
 #{CHAR_ERROR} File config/config.yaml doesn\'t support platform specific configuration
   You have to specify configuration per platform, like:
 
-  "android":
-    "files":
+  flavors: 
+    - test
+    - accept
+    - production
+    - release
+
+  android:
+    files:
       "path/to/new_file"
         release: "path/to/copyable_file"
         
-  "ios":
-    "files":
+  ios:
+    files:
       "path/to/new_file"
         release: "path/to/copyable_file"
 TEXT
                 exit
             end
 
+            # Older configuration files do not contain a flavors setup, override it:
+            unless @configuration.key?("flavors")
+                @configuration["flavors"] = ["test", "accept", "production", "release"]
+            end
+
+            # Check if we need to request some extra info, flavor is optional when running the command
+            if @flavor.nil?
+                @flavor = @@prompt.select("What flavor should be used?", @configuration["flavors"])
+            end
+
+            unless @configuration["flavors"].include? @flavor
+                warn colored :red, "#{CHAR_ERROR} The flavor you requested, isn't configured in config.yaml, available: #{@configuration["flavors"]}"
+                exit
+            end
+        end
+
+        def copy_configuration_files
             platformConfig = configuration[@platform]
 
             if platformConfig.key?('files')
@@ -75,6 +103,30 @@ TEXT
                 for key in filesToCopy.keys
                     fileToCopy = filesToCopy[key]
 
+                    # The file can be structured like: 
+                    # file:
+                    #     test: <x>
+                    #     accept, production: <y>
+
+                    # We're going to split the accept and production keys into separate keys
+                    addingFlavors = {}
+
+                    fileToCopy.each do |key, value|
+                        if key.include? ','
+                            newKeys = key.split(',')
+                            newKeys.each do |newKey|
+                                addingFlavors[newKey] = value
+                            end
+
+                            # Delete the original, comma separated key
+                            fileToCopy.delete(key)
+                        end
+                    end
+
+                    # Merge the new values into the set
+                    fileToCopy = fileToCopy.merge(addingFlavors)
+
+                    # Check if the accept flavor key exists, like: accept: <x>, or if it's present in a comma separated list: test,accept: <x>
                     if fileToCopy.key?(@flavor)
                         puts colored :default, "Copying #{fileToCopy[@flavor]} to #{key}" 
                         FileUtils.cp(fileToCopy[@flavor], key)

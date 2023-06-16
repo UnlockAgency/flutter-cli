@@ -1,0 +1,195 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'net/http'
+require 'net/https'
+require 'pathname'
+require 'json'
+require 'base64'
+require 'dotenv'
+
+Dotenv.load
+
+# ---------------------------------------
+
+PRONTALIZE_API_TOKEN = ENV["PRONTALIZE_API_TOKEN"]
+PRONTALIZE_PROJECT_ID = ENV["PRONTALIZE_PROJECT_ID"]
+PRONTALIZE_HOST = "prontalize.nl"
+
+XCODE_RESOURCES_PATH = "../ios/Runner/Resources"
+TRANSLATIONS_PATH = "../lib/l10n"
+
+# ---------------------------------------
+
+def puts_error(msg)
+    puts " \033[31m[ x ] \033[1mERROR\033[m\033[31m: #{msg}\033[m"
+    exit
+end
+
+def transform(text)
+  return text
+    .gsub("\r", "")
+    .gsub("\\\r", "")
+    .gsub("\n", "\\n")
+    .gsub("\\\n", "\\n")
+    .gsub("%s", "%@")
+    .gsub("\"", "\\\"")
+end
+
+puts " "
+puts "\033[2m.-----------------------------------------------.\033[m"
+puts "\033[2m|                                               |\033[m"
+puts "\033[2m|  \033[mprontalize iOS Localization importer v1.2.0  \033[2m|\033[m"
+puts "\033[2m|                                               |\033[m"
+puts "\033[2m'-----------------------------------------------'\033[m"
+puts " "
+
+if PRONTALIZE_API_TOKEN.nil?
+    puts_error("Missing PRONTALIZE_API_TOKEN. Set it in the .env file in the root of your project.")
+end
+
+if PRONTALIZE_PROJECT_ID.nil?
+    puts_error("Missing PRONTALIZE_PROJECT_ID. Set it in the .env file in the root of your project.")
+end
+
+# Some predefined variables
+d = "\033[2m→ \033[m"
+dir = File.expand_path(File.dirname(__FILE__))
+uri = URI.parse("https://#{PRONTALIZE_HOST}")
+
+allowed_locales = [ "da", "de", "el", "en-AU", "en-CA", "en-GB", "en-US", "es", "es-MX", "fi", "fr-CA", "fr", "id", "it", "ja", "ko", "ms", "nl", "no", "pt-BR", "pt", "ru", "sv", "th", "tr", "vi", "zh-Hans", "zh-Hant", "appleTV", "iMessage", "default" ]
+allowed_locales.each { |aloc| 
+  if aloc.length == 2
+    allowed_locales << "#{aloc}-#{aloc.upcase}"
+  end
+}
+
+appstore_key_mapping = {
+    "appstore.app.title" => [ "name", 30 ],
+    "appstore.app.promotionaltext" => [ "promotional_text", 170 ],
+    "appstore.app.keywords" => [ "keywords", 100 ],
+    "appstore.app.subtitle" => [ "subtitle", 30 ],
+    "appstore.app.description" => [ "description", 4000 ],
+    "appstore.app.whatsnew" => [ "release_notes", 4000 ]
+}
+
+# Getting translations
+puts "#{d}Downloading translations from prontalize API ..."
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+request = Net::HTTP::Get.new("/api/projects/#{PRONTALIZE_PROJECT_ID}/translation_keys")
+request.add_field('Content-Type', 'application/json')
+request.add_field('Authorization', "Bearer #{PRONTALIZE_API_TOKEN}")
+response = http.request(request)
+body = response.body
+begin
+    json = JSON.parse(body)
+rescue JSON::ParserError => error
+    puts_error "Error parsing JSON #{error}"
+end
+
+# Parsing translations
+
+puts "#{d}Parsing ..."
+files_to_write = {}
+translations = json["data"]
+if translations.nil?
+    puts_error "Invalid JSON"
+    exit
+elsif translations.empty?
+  puts_error "No translations"
+  exit
+end
+
+handled_unsupported_locals = []
+
+translations.each do |translation|
+    unless type = translation["key_type"]
+        next
+    end
+    unless key = translation["identifier"]
+        next
+    end
+    translation["translations"].each do |langtrans|
+        unless locale = langtrans["locale"]
+            next
+        end
+
+        text = langtrans["value"] || ""
+        line = {'key' => key, 'translation' => transform(text)}
+        filename_suffix = locale.split('_')[0]
+
+        case type
+        when "store"
+            localeWithDash = "#{locale}".gsub("_", "-")
+
+            if localeWithDash == "en-US"
+              unless Dir.exists? "#{dir}/../fastlane/metadata/#{localeWithDash}"
+                localeWithDash = "en-GB"
+              end
+            end
+
+            if localeWithDash.length == 2 && !allowed_locales.include?(locale)
+              localeWithDash = "#{locale}-#{locale.upcase}"
+              if locale == "en"
+                localeWithDash = "en-US"
+                unless Dir.exists? "#{dir}/../fastlane/metadata/#{localeWithDash}"
+                    localeWithDash = "en-GB"
+                end
+              end
+            end
+
+            if !allowed_locales.include?(localeWithDash) && !allowed_locales.include?(locale)
+              unless handled_unsupported_locals.include?(locale)
+                handled_unsupported_locals << locale
+                puts "#{d}Warning: Unsupported appstore locale: '#{localeWithDash}'"
+              end
+              next
+            end
+
+            length = appstore_key_mapping[key][1]
+            unless filename = appstore_key_mapping[key][0]
+                next
+            end
+
+            file = "#{dir}/../fastlane/metadata/#{localeWithDash}/#{filename}.txt"
+
+            text = text.gsub("\\n", "\n")
+            line = text[(0..(length - 1))]
+
+        when "metadata"
+            file = "#{dir}/#{XCODE_RESOURCES_PATH}/#{filename_suffix}.lproj/InfoPlist.strings"
+        else
+            file = "#{dir}/#{TRANSLATIONS_PATH}/app_#{filename_suffix}.arb"
+        end
+
+        if file.end_with?(".strings")
+          files_to_write[file] ||= []
+          files_to_write[file] << "\"#{key}\" = \"#{transform(text)}\";"
+        else
+          files_to_write[file] ||= {}
+          files_to_write[file][line['key']] = line['translation']
+        end
+    end
+end
+
+puts "#{d}Writing files ..."
+files_to_write.each do |file, content|
+    dir = File.dirname(file)
+    puts " #{d} Writing in '#{Pathname.new(dir).basename.to_s}/#{File.basename(file)}'"
+    unless File.directory?(dir)
+        FileUtils.mkdir_p dir
+    end
+    f = File.new(file, 'w+')
+    if file.end_with?(".strings")
+      content.each do |line|
+        f.write("#{line}\n")
+      end
+    else
+      f.write(content.to_json)
+    end
+
+    f.close
+end
+puts "#{d}\033[32mFinished\033[m"

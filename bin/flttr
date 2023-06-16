@@ -57,13 +57,12 @@ class App
     end
   end
 
-  # desc 'Create a new project'
-  # arg_name 'project-name'
-  # command :create do |c|
-  #   c.action do |global_options,options,args|
-  #     Commands::Create.new(args).execute
-  #   end
-  # end
+  desc 'Create a new project'
+  command :create do |c|
+    c.action do |global_options,options,args|
+      Commands::Create.new().execute
+    end
+  end
 
   desc 'Init a Flutter project for flavored configuration'
   command :init do |c|
@@ -92,9 +91,8 @@ class App
       :required => true
 
     c.flag [:f,:flavor], 
-      :desc => 'Specify flavor: [test, accept, production, release]', 
-      :must_match => ["test", "accept", "production", "release"],
-      :default_value => "release"
+      :desc => 'Specify flavor' 
+      # :default_value => "release"
 
     c.action do |global_options,options,args|
       Commands::Run.new(global_options.merge(options)).execute
@@ -117,9 +115,8 @@ class App
       :default_value => "apk"
 
     c.flag [:f,:flavor], 
-      :desc => 'Specify flavor: [test, accept, production, release]', 
-      :must_match => ["test", "accept", "production", "release"],
-      :default_value => "release"
+      :desc => 'Specify flavor'
+      # :default_value => "release"
 
     c.action do |global_options,options,args|
       Commands::Build.new(global_options.merge(options)).execute
@@ -146,7 +143,7 @@ class App
     end
 
     # Check if the directory contains a pubspec.yaml file, which is required for a Flutter project.
-    if commandName != 'upgrade' && commandName != 'config'
+    if commandName != 'upgrade' && commandName != 'config' && commandName != 'create'
       unless File.exist? "pubspec.yaml"
         warn colored :red, "#{CHAR_ERROR} The directory doesn't contain a pubspec.yaml, make sure to run this command inside a Flutter project. " 
         exit

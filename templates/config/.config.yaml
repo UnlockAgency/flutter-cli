@@ -1,12 +1,18 @@
-# files:
-#   "ios/Runner/GoogleService-Info.plist":
-#      release: "firebase/GoogleService-Info-release.plist"
-#      production: "firebase/GoogleService-Info-production.plist"
-#      accept: "firebase/GoogleService-Info-accept.plist"
-#      test: "firebase/GoogleService-Info-test.plist"
+flavors: 
+  - test
+  - accept
+  - production
+  - release
 
-#   "android/app/google-services.json":
-#      release: "firebase/google-services-release.json"
-#      production: "firebase/google-services-production.json"
-#      accept: "firebase/google-services-accept.json"
-#      test: "firebase/google-services-test.json"
+ios:
+  files:
+    "ios/Runner/GoogleService-Info.plist":
+      release: "firebase/GoogleService-Info-release.plist"
+      production: "firebase/GoogleService-Info-production.plist"
+      accept: "firebase/GoogleService-Info-accept.plist"
+      test: "firebase/GoogleService-Info-test.plist"
+
+android:
+  files:
+    "android/app/google-services.json": 
+      test,accept,production,release: "firebase/google-services.json"

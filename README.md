@@ -73,12 +73,31 @@ Shows the commands that you're able to run:
 
 ```
 flttr help
+flttr create [--help]
 flttr init [--help]
 flttr import [--help]
 flttr config [--help]
 flttr run [--help]
 flttr build [--help]
 flttr upgrade [--help]
+```
+
+## Create
+
+You can create a new project using `flttr create`. It either creates an entire new Flutter project for you, or can update an existing one. 
+
+As one of the final steps, it asks you if you want to copy files from a boilerplate repository. You can configure the repository during the step. It clones the repo and copies files to the newly created Flutter project. You can use these variables inside the boilerplate project, which will be replaced:
+
+```
+_BUNDLE_IDENTIFIER_IOS_
+_PROJECT_NAME_LOWER_CASED_
+_PROJECT_NAME_
+```
+
+Which can be used at locations like:
+
+```main.dart
+import 'package:_PROJECT_NAME_LOWER_CASED_/main/injection.dart';
 ```
 
 ## Init

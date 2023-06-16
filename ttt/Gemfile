@@ -1,0 +1,12 @@
+source "https://rubygems.org"
+
+if ARGV[0] == "update" || ARGV[0] == "install"
+  puts "Fetching Gemfile from gitlab.e-sites.nl..."
+end
+gem 'fastlane', git: 'https://github.com/fastlane/fastlane.git'
+gems = `git archive --remote=git@gitlab.e-sites.nl:team-i/ios/CI.git HEAD Gemfile | tar -xO`
+gems = gems.gsub!('gem "fastlane"', '')
+eval(gems)
+
+plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
+eval_gemfile(plugins_path) if File.exist?(plugins_path)

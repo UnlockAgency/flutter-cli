@@ -1,0 +1,24 @@
+environments:
+  - test
+  - accept
+  - production
+  - release
+  
+files:
+  "Runner/GoogleService-Info.plist":
+    release: "Firebase/GoogleService-Info-release.plist"
+    production: "Firebase/GoogleService-Info-production.plist"
+    accept: "Firebase/GoogleService-Info-accept.plist"
+    accept: "Firebase/GoogleService-Info-test.plist"
+
+appicon:
+  original: AppIcon.png
+  all_sizes: false
+  appiconset: Runner/Assets.xcassets/AppIcon.appiconset/
+  idioms:
+    - iphone
+  ribbon:
+    release: ""
+    production: "PRODUCTION"
+    accept: "ACCEPT"
+    accept: "TEST"

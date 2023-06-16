@@ -1,6 +1,3 @@
-require 'open-uri'
-require 'json'
-require 'yaml'
 
 module Commands
     class Init
@@ -10,17 +7,9 @@ module Commands
         def execute
             puts colored :blue, "#{CHAR_FLAG} Initializing this directory.."
 
-            # Make the config dir
-            puts colored :default, "#{CHAR_VERBOSE} Creating the config/ios and config/android dirs if they don't yet exist" unless !$verbose
-            Dir.mkdir "config" unless File.exist? "config"
-            Dir.mkdir "config/android" unless File.exist? "config/android"
-            Dir.mkdir "config/ios" unless File.exist? "config/ios"
-
-            puts colored :blue, "\n#{CHAR_FLAG} Copying configuration files"
-            FileUtils.copy_entry File.join(File.dirname(__FILE__), '../../templates/config'), "config"
-
-            puts colored :blue, "\n#{CHAR_FLAG} Copying default .env"
-            FileUtils.copy_entry File.join(File.dirname(__FILE__), '../../templates/.env.dist'), ".env"
+            initializer = Initializer.new(Dir.pwd)
+            initializer.run()
+            initializer.set_flavors(['test', 'accept', 'production', 'release'])
 
             puts colored :green, "#{CHAR_CHECK} Done!"
         end
