@@ -3,15 +3,15 @@
 Flutter provides commands to run and build the app on simulators or devices. We've created a wrapper, which also configures our project for the right flavor and build settings.
 
 1. [Getting started](#getting-started)
-1. [Roadmap](#roadmap)
 1. [Usage](#usage)
+1. [Create](#create)
 1. [Init](#init)
+1. [Import](#import)
 1. [Configuration](#configuration)
 1. [Run](#run)
 1. [Build](#build)
 1. [Upgrade](#upgrade)
 1. [Development](#development)
-1. [Troubleshooting](#troubleshooting)
 
 ## Getting started
 
@@ -180,10 +180,3 @@ Include the `*.gem` file you created during build in this release. It doesn't ma
 
 ### Upgrading
 When running `flttr upgrade`, the latest version will be available for everyone. The command will automatically fetch the `*.gem` file you've uploaded with the release tag.
-
-## Troubleshooting
- 
-When building for an iPhone, Flutter stores the signing certificate into memory. If you then want to run a different app on a physical device, Flutter always uses the same certificate.
-
-To clear it before running on a device, run `flutter config --clear-ios-signing-cert`. 
-
