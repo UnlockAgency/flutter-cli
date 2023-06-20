@@ -6,7 +6,7 @@ require 'tty-prompt'
 
 module Commands
     class Buildable   
-        attr_accessor :platform, :flavor, :release, :configuration
+        attr_accessor :platform, :flavor, :release, :configuration, :device
 
         def initialize(args)
             @platform = args[:platform]
