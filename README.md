@@ -42,7 +42,7 @@ SYNOPSIS
     flttr [global options] command [command options] [arguments...]
 
 VERSION
-    0.1.2
+    1.4.2
 
 GLOBAL OPTIONS
     --help             - Show this message
@@ -144,8 +144,8 @@ For Android, you can specify the artifact type, `apk` or `appbundle`. You're als
 ```
 <artifact> = apk, appbundle
 
-flttr build --platform android --artifact <artifact> --flavor <flavor> --release
-flttr build --platform ios --flavor <flavor> --release
+flttr build --platform android --artifact <artifact> --flavor <flavor> [--release, --no-obfuscation]
+flttr build --platform ios --flavor <flavor> [--release, --no-obfuscation]
 ```
 
 ## Upgrade

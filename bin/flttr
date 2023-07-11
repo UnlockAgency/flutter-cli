@@ -82,17 +82,18 @@ class App
 
   desc 'Run on a device or simulator'
   command :run do |c|
-    c.switch [:r,:release], 
-      :desc => 'Run in release mode, debug by default'
-
     c.flag [:p,:platform], 
       :desc => 'Specify platform, android or ios', 
-      :must_match => ["android", "ios"],
-      :required => true
+      :must_match => ["android", "ios"]
 
     c.flag [:f,:flavor], 
       :desc => 'Specify flavor' 
-      # :default_value => "release"
+      
+    c.switch [:r,:release], 
+      :desc => 'Run in release mode, debug by default'
+    
+    c.switch [:profile], 
+      :desc => 'Run in profile mode, debug by default'
 
     c.action do |global_options,options,args|
       Commands::Run.new(global_options.merge(options)).execute
@@ -101,6 +102,9 @@ class App
 
   desc 'Build the app'
   command :build do |c|
+    c.switch ['no-obfuscation'],
+      :desc => 'Disable code obfuscation, turned on by default'
+
     c.switch [:r,:release], 
       :desc => 'Run in release mode, debug by default'
 
@@ -116,7 +120,6 @@ class App
 
     c.flag [:f,:flavor], 
       :desc => 'Specify flavor'
-      # :default_value => "release"
 
     c.action do |global_options,options,args|
       Commands::Build.new(global_options.merge(options)).execute

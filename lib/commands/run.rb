@@ -3,15 +3,26 @@ module Commands
 
         def initialize(args)
             super 
+
+            @profile = args[:profile]
         end
 
         def execute
+            # Check if the user has selected a platform
+            if @platform.nil?
+                @platform = @@prompt.select("Choose the platform", [
+                    { name: 'iOS', value: 'ios' },
+                    { name: 'Android', value: 'android' }
+                ])
+            end
+
             super 
 
             select_device
 
             command = "flutter run #{@platform} --target=lib/main.dart --dart-define-from-file=config/.build.json --device-id #{@device}"
             command += @release ? " --release" : ""
+            command += @profile ? " --profile" : ""
 
             puts colored :blue, "\n#{CHAR_FLAG} Running app in flavor: #{@flavor}"
             puts colored :default, "#{command}\n\n"
