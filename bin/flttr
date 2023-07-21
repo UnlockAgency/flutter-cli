@@ -94,6 +94,9 @@ class App
     
     c.switch [:profile], 
       :desc => 'Run in profile mode, debug by default'
+    
+    c.switch [:prepare], 
+      :desc => 'Prepare only for running the app (writing config files)'
 
     c.action do |global_options,options,args|
       Commands::Run.new(global_options.merge(options)).execute
@@ -120,6 +123,9 @@ class App
 
     c.flag [:f,:flavor], 
       :desc => 'Specify flavor'
+    
+    c.switch [:prepare], 
+      :desc => 'Prepare only for running the app (writing config files)'
 
     c.action do |global_options,options,args|
       Commands::Build.new(global_options.merge(options)).execute

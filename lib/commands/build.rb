@@ -6,10 +6,16 @@ module Commands
 
             @@artifact = args[:artifact]
             @@obfuscation = args['no-obfuscation'] == false
+            @@prepare = args['prepare'] == true
         end
 
         def execute
             super 
+
+            if @@prepare
+                puts colored :blue, "\n#{CHAR_FLAG} Skipping actual build in prepare mode"
+                return
+            end
 
             artifactType = @@artifact || "apk"
             mode = "build #{@platform == "ios" ? "ios" : artifactType}"

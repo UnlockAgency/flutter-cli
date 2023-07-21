@@ -18,6 +18,11 @@ module Commands
 
             super 
 
+            if @@prepare
+                puts colored :blue, "\n#{CHAR_FLAG} Skipping actual build in prepare mode"
+                return
+            end
+
             select_device
 
             command = "flutter run #{@platform} --target=lib/main.dart --dart-define-from-file=config/.build.json --device-id #{@device}"

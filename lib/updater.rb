@@ -5,7 +5,7 @@ require 'net/http'
 class Updater
     def self.check(silently=false)
         begin
-            url = "https://raw.githubusercontent.com/UnlockAgency/flttr-cli/master/latest_release.json"
+            url = "https://raw.githubusercontent.com/UnlockAgency/flutter-cli/master/latest_release.json"
 
             puts colored :default, "#{CHAR_VERBOSE} Fetching the latest release from Github:" unless !$verbose
             puts colored :default, "#{CHAR_VERBOSE} #{url}" unless !$verbose
