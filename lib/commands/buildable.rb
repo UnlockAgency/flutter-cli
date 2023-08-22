@@ -33,6 +33,9 @@ module Commands
                 end
 
                 update_xcconfig(buildConfig)
+
+                # Change the xcode location for this 
+                switch_xcode_location
             end
         end
 
@@ -73,7 +76,7 @@ module Commands
       "path/to/new_file"
         release: "path/to/copyable_file"
 TEXT
-                exit
+                exit_now!('Update the config/config.yaml file')
             end
 
             # Older configuration files do not contain a flavors setup, override it:
@@ -234,6 +237,20 @@ TEXT
                     file.write "#{line}\n"
                 end
             end
+        end
+
+        def switch_xcode_location
+            puts colored :blue, "\n#{CHAR_FLAG} Setting Xcode version"
+
+            xcode_location = Settings.get('xcode_location')
+            unless xcode_location.nil? || $default_xcode_location.include?(xcode_location)
+                puts colored :default, "#{CHAR_VERBOSE} Switching to: #{xcode_location}" unless !$verbose
+                system("sudo xcode-select -s #{xcode_location}")
+            end
+            
+            puts colored :default, "#{CHAR_VERBOSE} Selected version is:"
+
+            system("xcodebuild -version")
         end
 
         def update_ios_signing_certificate(newValue)

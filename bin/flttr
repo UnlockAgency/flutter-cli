@@ -32,6 +32,7 @@ end
 
 # Global variables
 $verbose = false
+$default_xcode_location = nil
 
 class App
   extend GLI::App
@@ -51,6 +52,9 @@ class App
     c.flag ['version-check'], 
       :desc => 'Enable or disable the version check: true or false', 
       :must_match => ['true', 'false']
+
+    c.flag ['xcode-location'], 
+      :desc => 'Switch the command line Xcode location'
 
     c.action do |global_options,options,args|
       Commands::Config.new(global_options.merge(options)).execute
@@ -141,6 +145,9 @@ class App
 
   pre do |global,command,options,args|
 
+    # Save the current Xcode location
+    $default_xcode_location = `xcode-select -print-path`.gsub("\n", "")
+
     # Set verbose logging
     $verbose = global[:verbose]
 
@@ -163,14 +170,14 @@ class App
   end
 
   post do |global,command,options,args|
-    # Post logic here
-    # Use skips_post before a command to skip this
-    # block on that command only
+    # Revert the Xcode location to the default
+    system("sudo xcode-select -s #{$default_xcode_location}") unless $default_xcode_location.nil?
   end
 
   on_error do |exception|
     # Error logic here
-    # return false to skip default error handling
+    system("sudo xcode-select -s #{$default_xcode_location}") unless $default_xcode_location.nil?
+    
     true
   end
 end
