@@ -37,6 +37,9 @@ module Commands
                 # Change the xcode location for this 
                 switch_xcode_location
             end
+
+            # Run pre-build actions
+            run_pre_build_actions
         end
 
         def prepare_dir
@@ -283,6 +286,30 @@ TEXT
             end
 
             puts colored :green, "\n#{CHAR_CHECK} Updated flutter settings"
+        end
+
+        def run_pre_build_actions
+            # Check if a pre-action is configured
+            unless @configuration.key?('actions') && @configuration['actions'].key?('pre')
+                warn colored :yellow, "\n#{CHAR_WARNING} No pre-actions configured"
+                return
+            end
+
+            puts colored :blue, "\n#{CHAR_FLAG} Running build pre-actions"
+
+            preActions = @configuration['actions']['pre']
+
+            preActions.each do |action|
+                command = action.gsub("{flavor}", @flavor)
+                puts colored :default, "#{CHAR_VERBOSE} Running: #{command}" unless !$verbose
+
+                result = system command
+
+                unless result == true
+                    warn colored :yellow, "\n#{CHAR_WARNING} The command failed with result: #{result}"
+                    break
+                end
+            end
         end
     end
 end
