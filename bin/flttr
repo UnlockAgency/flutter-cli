@@ -109,30 +109,64 @@ class App
 
   desc 'Build the app'
   command :build do |c|
-    c.switch ['obfuscation'],
-      :desc => 'Enable code obfuscation, turned off by default'
+    c.command :android do |sc|
+      sc.switch ['obfuscation'],
+        :desc => 'Enable code obfuscation, turned off by default'
+      
+      sc.flag [:f,:flavor], 
+        :desc => 'Specify flavor'
+      
+      sc.switch [:prepare], 
+        :desc => 'Prepare only for running the app (writing config files)',
+        :negatable => false
 
-    c.switch [:r,:release], 
-      :desc => 'Run in release mode, debug by default'
+      sc.switch [:r,:release], 
+        :desc => 'Run in release mode, debug by default'
 
-    c.flag [:p,:platform], 
-      :desc => 'Specify platform, android or ios', 
-      :must_match => ["android", "ios"],
-      :required => true
+      sc.flag [:a,:artifact], 
+        :desc => 'Artifact type: apk or appbundle', 
+        :must_match => ["apk", "appbundle"],
+        :default_value => "apk"
 
-    c.flag [:a,:artifact], 
-      :desc => 'Artifact type, required for android', 
-      :must_match => ["apk", "appbundle"],
-      :default_value => "apk"
+      sc.action do |global_options,options,args|
+        mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'android'})
+        mergedOptions.delete(GLI::Command::PARENT)
+        Commands::Build.new(mergedOptions).execute
+      end
+    end
 
-    c.flag [:f,:flavor], 
-      :desc => 'Specify flavor'
-    
-    c.switch [:prepare], 
-      :desc => 'Prepare only for running the app (writing config files)'
+    c.command :ios do |sc|
+      sc.switch ['obfuscation'],
+        :desc => 'Enable code obfuscation, turned off by default'
+      
+      sc.flag [:f,:flavor], 
+        :desc => 'Specify flavor'
+      
+      sc.switch [:prepare], 
+        :desc => 'Prepare only for running the app (writing config files)',
+        :negatable => false
 
-    c.action do |global_options,options,args|
-      Commands::Build.new(global_options.merge(options)).execute
+      sc.switch [:r,:release], 
+        :desc => 'Run in release mode, debug by default'
+
+      sc.switch [:a,:archive], 
+        :desc => 'Whether to create an archive, turned off by default',
+        :default_value => false
+
+      sc.switch [:c,:codesign], 
+        :desc => 'Whether to enable code signing, turned off by default',
+        :default_value => false
+
+      sc.flag [:e,'export-method'], 
+        :desc => 'Export method, allowed when archiving and one of: app-store, development, ad-hoc, enterprise', 
+        :must_match => ["app-store", "development", "ad-hoc", "enterprise"],
+        :default_value => "app-store"
+
+      sc.action do |global_options,options,args|
+        mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'ios'})
+        mergedOptions.delete(GLI::Command::PARENT)
+        Commands::Build.new(mergedOptions).execute
+      end
     end
   end
 
@@ -159,12 +193,12 @@ class App
     end
 
     # Check if the directory contains a pubspec.yaml file, which is required for a Flutter project.
-    if commandName != 'upgrade' && commandName != 'config' && commandName != 'create'
-      unless File.exist? "pubspec.yaml"
-        warn colored :red, "#{CHAR_ERROR} The directory doesn't contain a pubspec.yaml, make sure to run this command inside a Flutter project. " 
-        exit
-      end
-    end
+    # if commandName != 'upgrade' && commandName != 'config' && commandName != 'create'
+    #   unless File.exist? "pubspec.yaml"
+    #     warn colored :red, "#{CHAR_ERROR} The directory doesn't contain a pubspec.yaml, make sure to run this command inside a Flutter project. " 
+    #     exit
+    #   end
+    # end
 
     true
   end

@@ -160,7 +160,7 @@ flttr config --version-check=false
 ```
 
 ### Xcode version
-You're able to switch Xcode version via xcode-select -s /Applications/Xcode.app. But this is a system wide switch. The flttr cli can also be configured to always use a specific version of Xcode installed, like the beta version.
+You're able to switch Xcode version via `xcode-select -s /Applications/Xcode.app`. But this is a system wide switch. The flttr cli can also be configured to always use a specific version of Xcode installed, like the beta version.
 
 By default, flttr uses the default Xcode version installed. You can configure a different version to be used with:
 
@@ -198,13 +198,29 @@ flttr [ --verbose] run --platform <platform> --flavor <flavor> [--release]
 
 ### Building the app
 
-For Android, you can specify the artifact type, `apk` or `appbundle`. You're also able to build a debug or release version. 
+Global options:
 
 ```
-<artifact> = apk, appbundle
+--flavor            <value from .config.yaml>
+--[no-]obfuscation  Enable or disable code obfuscation, disabled by default
+--release           Enable or disable release mode, disabled by default
+--prepare           Run the command in "prepare" mode, to only copy config files and show the flutter command which would be executed
+```
 
-flttr build --platform android --artifact <artifact> --flavor <flavor> [--release, --[no-]obfuscation]
-flttr build --platform ios --flavor <flavor> [--release, --[no-]obfuscation]
+**Android:**
+```
+--artifact          Either apk (default) or appbundle
+
+flttr build android --flavor=accept --artifact=appbundle --obfuscation --release
+```
+
+**iOS:**
+```
+--archive           Whether to build and create an .xcarchive too
+--[no-]codesign     Enable or disable code signing (in combination with --release & disabled by default)
+--export-method     Either app-store (default), development, ad-hoc or enterprise
+
+flttr build ios --flavor=accept --export-method=ad-hoc --obfuscation --archive --release --codesign
 ```
 
 ## flttr upgrade
