@@ -73,7 +73,7 @@ flttr build [--help]
 flttr upgrade [--help]
 ```
 
-## Create
+## flttr create
 
 You can create a new project using `flttr create`. It either creates an entire new Flutter project for you, or can update an existing one. 
 
@@ -91,7 +91,7 @@ Which can be used at locations like:
 import 'package:_PROJECT_NAME_LOWER_CASED_/main/injection.dart';
 ```
 
-## Init
+## flttr init
 
 When installing a new Flutter project, you need to add the config/ directory and it's subfiles to be able to use flavors. Flttr provides an `init` command to create this directory for you and create the necessary files.
 
@@ -99,7 +99,48 @@ When installing a new Flutter project, you need to add the config/ directory and
 flttr init
 ```
 
-## Import
+### `config/.config.yaml`
+
+```yaml
+# A list of flavors available for your app
+flavors: 
+    - accept
+    - production
+    - release
+
+# A list of actions triggered when building or running the app
+# The commands are executed from the root of the project 
+actions:
+    pre:
+        - echo 'Run command for flavor: {flavor}'
+
+# Configure files which are flavor-specific
+# These are then copied during build to the location the key specifies
+files:
+    ios:
+        "ios/Runner/GoogleService-Info.plist":
+            release: "firebase/GoogleService-Info-release.plist"
+            accept,production: "firebase/GoogleService-Info.plist"
+
+files:
+    android:
+```
+
+### `config/*.json`
+
+These files contain environment variables which are used for both platforms: API keys, flavor names, endpoints et cetera. These can be accessed in a Flutter project with:
+
+```
+String.fromEnvironment('API_HOST')
+```
+
+### `config/[android|ios]/*.json`
+
+These files contain platform specific configuration variables. Like for Android: application ID and (optional) suffix. These are accessible in gradle files too.
+
+The variables inside the iOS .json files are added as config variables to `Generated.xcconfig`. This way, they can be used to define signing configuration.
+
+## flttr import
 
 We've built an integration with the Prontalize API to easily import the translations from their API into the project. Before running the command, make sure you've added a `.env` file which contains the `PRONTALIZE_API_KEY` and `PRONTALIZE_PROJECT_ID`.
 
@@ -107,8 +148,9 @@ We've built an integration with the Prontalize API to easily import the translat
 flttr import translations
 ```
 
-## Configuration
+## flttr config
 
+### Version check
 By default, flttr does a version check when executing any command. It then checks for any newer version at the Github releases overview. If an upgrade is available, you'll be notified. Upgrading is a manual step you need to do yourself: `flttr upgrade`. 
 
 If you wish to disable the version check before running the commands, update your config: 
@@ -117,38 +159,55 @@ If you wish to disable the version check before running the commands, update you
 flttr config --version-check=false
 ```
 
-## Run
+### Xcode version
+You're able to switch Xcode version via xcode-select -s /Applications/Xcode.app. But this is a system wide switch. The flttr cli can also be configured to always use a specific version of Xcode installed, like the beta version.
+
+By default, flttr uses the default Xcode version installed. You can configure a different version to be used with:
 
 ```
-<flavor> = test, accept, production, release
+flttr config --xcode-location=/Applications/Xcode-beta.app
+```
+
+This might occasionally ask for a sudo password, because the `xcode-select` command requires it. You can disable the password request by opening:
+
+```
+sudo visudo
+``` 
+
+And then adding this line:
+
+```
+## Do not ask for a password when running the xcode-select command
+%admin ALL=(ALL) NOPASSWD: /usr/bin/xcode-select
+```
+
+Save the file py pressing `:wq` and you're done.
+
+## flttr run|build
+
+### Setup
+
+The project should contain a `/config` folder, which can also be created for you by running `flttr init`. The contents of this folder and it's files is described at [`flttr init`](#flttr-init)
+
+### Running the app
+```
 <platform> = ios, android
 
-flttr [ --verbose] run --platform <platform> --flavor <flavor>
+flttr [ --verbose] run --platform <platform> --flavor <flavor> [--release]
 ```
 
-### Release
-
-```
-<flavor> = test, accept, production, release
-<platform> = ios, android
-
-flttr [ --verbose] run --platform <platform> --flavor <flavor> --release
-```
-
-## Build
-
-### Local builds
+### Building the app
 
 For Android, you can specify the artifact type, `apk` or `appbundle`. You're also able to build a debug or release version. 
 
 ```
 <artifact> = apk, appbundle
 
-flttr build --platform android --artifact <artifact> --flavor <flavor> [--release, --no-obfuscation]
-flttr build --platform ios --flavor <flavor> [--release, --no-obfuscation]
+flttr build --platform android --artifact <artifact> --flavor <flavor> [--release, --[no-]obfuscation]
+flttr build --platform ios --flavor <flavor> [--release, --[no-]obfuscation]
 ```
 
-## Upgrade
+## flttr upgrade
 
 You're able to upgrade the CLI using:
 

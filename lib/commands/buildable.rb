@@ -69,6 +69,10 @@ module Commands
     - production
     - release
 
+  actions:
+    pre:
+      - echo 'Hello world'
+
   android:
     files:
       "path/to/new_file"
@@ -113,6 +117,7 @@ TEXT
                     # file:
                     #     test: <x>
                     #     accept, production: <y>
+                    #     *: <z>
 
                     # We're going to split the accept and production keys into separate keys
                     addingFlavors = {}
@@ -133,7 +138,7 @@ TEXT
                     fileToCopy = fileToCopy.merge(addingFlavors)
 
                     # Check if the accept flavor key exists, like: accept: <x>, or if it's present in a comma separated list: test,accept: <x>
-                    if fileToCopy.key?(@flavor)
+                    if fileToCopy.key?('*') || fileToCopy.key?(@flavor)
                         puts colored :default, "Copying #{fileToCopy[@flavor]} to #{key}" 
                         FileUtils.cp(fileToCopy[@flavor], key)
 

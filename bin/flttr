@@ -109,8 +109,8 @@ class App
 
   desc 'Build the app'
   command :build do |c|
-    c.switch ['no-obfuscation'],
-      :desc => 'Disable code obfuscation, turned on by default'
+    c.switch ['obfuscation'],
+      :desc => 'Enable code obfuscation, turned off by default'
 
     c.switch [:r,:release], 
       :desc => 'Run in release mode, debug by default'

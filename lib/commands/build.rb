@@ -5,8 +5,11 @@ module Commands
             super 
 
             @@artifact = args[:artifact]
-            @@obfuscation = args['no-obfuscation'] == false
+            @@obfuscation = args['obfuscation'] == true
             @@prepare = args['prepare'] == true
+
+            pp args 
+            exit
         end
 
         def execute
