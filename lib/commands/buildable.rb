@@ -24,15 +24,15 @@ module Commands
 
             copy_configuration_files
 
-            buildConfig = write_build_config
+            @buildConfig = write_build_config
 
             if @platform == "ios"
                 # Update the signing certificate
-                if buildConfig.key?('CODE_SIGN_IDENTITY')
-                    update_ios_signing_certificate(buildConfig['CODE_SIGN_IDENTITY'])
+                if @buildConfig.key?('CODE_SIGN_IDENTITY')
+                    update_ios_signing_certificate(@buildConfig['CODE_SIGN_IDENTITY'])
                 end
 
-                update_xcconfig(buildConfig)
+                update_xcconfig(@buildConfig)
 
                 # Change the xcode location for this 
                 switch_xcode_location

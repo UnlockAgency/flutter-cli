@@ -49,15 +49,57 @@ module Commands
         end
 
         def build_ios
+            exportOptionsPath = generate_ios_export_options
+
             buildMode = @@archive ? "ipa" : "ios"
             mode = "build #{buildMode}"
 
             command = "flutter #{mode} --target=lib/main.dart --dart-define-from-file=config/.build.json"
-            command += @@exportMethod != nil ? " --export-method #{@@exportMethod}" : ""
+            command += @@archive && @@exportMethod != nil ? " --export-method #{@@exportMethod}" : ""
             command += @@obfuscation ? " --obfuscate --split-debug-info=./debug_info" : ""
             command += @release ? " --release #{@@codesign == false ? "--no-codesign" : ""}" : ""
 
+            unless exportOptionsPath.nil? || exportOptionsPath.empty?
+                command += "--export-options-plist=#{exportOptionsPath}"
+            end
+
             return command
+        end
+
+        def generate_ios_export_options
+            unless @@archive && @@exportMethod != nil
+                return nil
+            end
+
+            puts colored :blue, "\n#{CHAR_FLAG} Writing the export_options to ios/export_options.plist"
+
+            contents = File.read(File.join(File.dirname(__FILE__), '../../templates/build/ios/export_options.plist'))
+            exportOptionsPlist = contents.gsub('{EXPORT_METHOD}', @@exportMethod)
+
+            [
+                'PRODUCT_BUNDLE_IDENTIFIER', 
+                'PROVISIONING_PROFILE_SPECIFIER', 
+                'CODE_SIGN_IDENTITY', 
+                'DEVELOPMENT_TEAM'
+            ].each do |key|
+                if @buildConfig.fetch(key, '') == ''
+                    warn colored :yellow, "\n#{CHAR_WARNING} You haven't provided a value for #{key} in your config/ios/#{@flavor}.json file"
+                end
+
+                exportOptionsPlist = exportOptionsPlist.gsub("{#{key}}", @buildConfig.fetch(key, ''))
+            end
+
+            begin
+                # Write the export options to the projects ios folder
+                File.open('./ios/export_options.plist', 'w') do |file|
+                    file.write(exportOptionsPlist)
+                end
+            rescue => e
+                warn colored :red, "\n#{CHAR_ERROR} Unable to write the ios/export_options.plist file: \n#{e.message}"
+                exit
+            end
+
+            return './ios/export_options.plist'
         end
     end
 end

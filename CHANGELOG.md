@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.7.1
+
+### Improvements
+- Added `--export-options-plist` argument to `flutter build ipa` command, to specify manual signing configuration
+
 ## v1.7.0
 
 ### Breaking changes

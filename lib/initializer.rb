@@ -18,10 +18,10 @@ class Initializer
         Dir.mkdir "#{@directory}/config/ios" unless File.exist? "#{@directory}/config/ios"
 
         puts colored :blue, "\n#{CHAR_FLAG} Copying configuration files"
-        FileUtils.copy_entry File.join(File.dirname(__FILE__), '../templates/config'), "#{@directory}/config"
+        FileUtils.copy_entry File.join(File.dirname(__FILE__), '../templates/project/config'), "#{@directory}/config"
 
         puts colored :blue, "\n#{CHAR_FLAG} Copying default .env"
-        FileUtils.copy_entry File.join(File.dirname(__FILE__), '../templates/.env.dist'), "#{@directory}/.env"
+        FileUtils.copy_entry File.join(File.dirname(__FILE__), '../templates/project/.env.dist'), "#{@directory}/.env"
     end
 
     def set_flavors(flavors)
