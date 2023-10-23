@@ -114,6 +114,7 @@ module Commands
                 "firebase_core", 
                 "firebase_analytics", 
                 "firebase_crashlytics", 
+                "firebase_messaging",
                 "sentry_flutter", 
                 "uuid", 
                 "package_info_plus", 
@@ -159,8 +160,8 @@ module Commands
 
             Dir.mkdir boilerplate_dir unless File.exist? boilerplate_dir
 
-            # git@gitlab.e-sites.nl:team-i/flutter/boilerplate.git
-            system("git archive --remote=#{boilerplate_repository} HEAD | tar -x -C #{boilerplate_dir}")
+            # git@github.com:unlockagency/boilerplate.git
+            system("git clone --quiet --depth 1 --branch master #{boilerplate_repository} #{boilerplate_dir}")
 
             fileRegex=".*\.(dart|md|xcconfig|plist)$"
 
@@ -176,6 +177,9 @@ module Commands
             FileUtils.remove_dir("#{@project_dir}/templates")
 
             Dir.mkdir "#{@project_dir}/test" unless File.exist? "#{@project_dir}/test"
+
+            # Remove the created .git directory
+            FileUtils.remove_dir("#{@project_dir}/.git")
 
             FileUtils.remove_dir(boilerplate_dir)
         end

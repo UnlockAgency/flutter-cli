@@ -55,12 +55,11 @@ module Commands
             mode = "build #{buildMode}"
 
             command = "flutter #{mode} --target=lib/main.dart --dart-define-from-file=config/.build.json"
-            command += @@archive && @@exportMethod != nil ? " --export-method #{@@exportMethod}" : ""
             command += @@obfuscation ? " --obfuscate --split-debug-info=./debug_info" : ""
             command += @release ? " --release #{@@codesign == false ? "--no-codesign" : ""}" : ""
 
             unless exportOptionsPath.nil? || exportOptionsPath.empty?
-                command += "--export-options-plist=#{exportOptionsPath}"
+                command += " --export-options-plist=#{exportOptionsPath}"
             end
 
             return command

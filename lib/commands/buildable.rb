@@ -54,7 +54,7 @@ module Commands
                 puts colored :default, "#{CHAR_VERBOSE} Loading config/.config.yaml contents" unless !$verbose
                 @configuration = YAML.load_file('config/.config.yaml')
             rescue
-                warn colored :yellow, "\n#{CHAR_WARNING} File config/config.yaml doesn\'t exist, using empty configuration: {}"
+                warn colored :yellow, "\n#{CHAR_WARNING} File config/.config.yaml doesn\'t exist, using empty configuration: {}"
                 @configuration = {"flavors": ["test", "accept", "production", "release"], "android" => {}, "ios" => {}}
             end
 
@@ -83,7 +83,7 @@ module Commands
       "path/to/new_file"
         release: "path/to/copyable_file"
 TEXT
-                exit_now!('Update the config/config.yaml file')
+                exit_now!('Update the config/.config.yaml file')
             end
 
             # Older configuration files do not contain a flavors setup, override it:

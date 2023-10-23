@@ -4,19 +4,22 @@ flavors:
   - production
   - release
 
-actions:
-  pre:
-    - echo "This is a pre-build command for flavor: {flavor}"
+#actions:
+#  pre:
+#    - echo \"This is a pre-build command for flavor: {flavor}\"
 
 ios:
   files:
     "ios/Runner/GoogleService-Info.plist":
-      release: "firebase/GoogleService-Info-release.plist"
-      production: "firebase/GoogleService-Info-production.plist"
-      accept: "firebase/GoogleService-Info-accept.plist"
       test: "firebase/GoogleService-Info-test.plist"
+      accept: "firebase/GoogleService-Info-accept.plist"
+      production: "firebase/GoogleService-Info-production.plist"
+      release: "firebase/GoogleService-Info-release.plist"
 
 android:
   files:
     "android/app/google-services.json": 
-      *: "firebase/google-services.json"
+      test: "firebase/google-services.json"
+      accept: "firebase/google-services.json"
+      production: "firebase/google-services.json"
+      release: "firebase/google-services.json"

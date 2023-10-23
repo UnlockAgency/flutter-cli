@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.7.2
+
+### Bugfixes
+- Fixed the `flttr create` command
+- Updated templates for a new project
+
 ## v1.7.1
 
 ### Improvements
