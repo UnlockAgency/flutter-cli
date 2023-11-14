@@ -104,6 +104,7 @@ flttr init
 ```yaml
 # A list of flavors available for your app
 flavors: 
+    - test
     - accept
     - production
     - release
@@ -116,14 +117,16 @@ actions:
 
 # Configure files which are flavor-specific
 # These are then copied during build to the location the key specifies
-files:
-    ios:
+ios:
+    files:
         "ios/Runner/GoogleService-Info.plist":
             release: "firebase/GoogleService-Info-release.plist"
-            accept,production: "firebase/GoogleService-Info.plist"
+            test,accept,production: "firebase/GoogleService-Info.plist"
 
-files:
-    android:
+android:
+    files: {}
+
+web: {}
 ```
 
 ### `config/*.json`
@@ -134,7 +137,7 @@ These files contain environment variables which are used for both platforms: API
 String.fromEnvironment('API_HOST')
 ```
 
-### `config/[android|ios]/*.json`
+### `config/[android|ios|web]/*.json`
 
 These files contain platform specific configuration variables. Like for Android: application ID and (optional) suffix. These are accessible in gradle files too.
 
@@ -191,7 +194,7 @@ The project should contain a `/config` folder, which can also be created for you
 
 ### Running the app
 ```
-<platform> = ios, android
+<platform> = ios, android, web
 
 flttr [ --verbose] run --platform <platform> --flavor <flavor> [--release]
 ```
@@ -202,14 +205,14 @@ Global options:
 
 ```
 --flavor            <value from .config.yaml>
---[no-]obfuscation  Enable or disable code obfuscation, disabled by default
---release           Enable or disable release mode, disabled by default
 --prepare           Run the command in "prepare" mode, to only copy config files and show the flutter command which would be executed
 ```
 
 **Android:**
 ```
 --artifact          Either apk (default) or appbundle
+--[no-]obfuscation  Enable or disable code obfuscation, disabled by default
+--release           Enable or disable release mode, disabled by default
 
 flttr build android --flavor=accept --artifact=appbundle --obfuscation --release
 ```
@@ -219,8 +222,15 @@ flttr build android --flavor=accept --artifact=appbundle --obfuscation --release
 --archive           Whether to build and create an .xcarchive too
 --[no-]codesign     Enable or disable code signing (in combination with --release & disabled by default)
 --export-method     Either app-store (default), development, ad-hoc or enterprise
+--[no-]obfuscation  Enable or disable code obfuscation, disabled by default
+--release           Enable or disable release mode, disabled by default
 
 flttr build ios --flavor=accept --export-method=ad-hoc --obfuscation --archive --release --codesign
+```
+
+**Web:**
+```
+flttr build web --flavor=accept
 ```
 
 ## flttr upgrade

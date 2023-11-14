@@ -21,8 +21,10 @@ module Commands
 
             if @platform == "android"
                 command = build_android
-            else
+            elsif @platform == "ios"
                 command = build_ios
+            else
+                command = build_web
             end
 
             if @@prepare
@@ -63,6 +65,10 @@ module Commands
             end
 
             return command
+        end
+
+        def build_web
+            return "flutter build web --target=lib/main.dart --dart-define-from-file=config/.build.json"
         end
 
         def generate_ios_export_options

@@ -12,10 +12,12 @@ class Initializer
 
     def run
         # Make the config dir
-        puts colored :default, "#{CHAR_VERBOSE} Creating the config/ios and config/android dirs if they don't yet exist" unless !$verbose
+        puts colored :default, "#{CHAR_VERBOSE} Creating the config/{ios,android,web} dirs if they don't yet exist" unless !$verbose
         Dir.mkdir "#{@directory}/config" unless File.exist? "#{@directory}/config"
-        Dir.mkdir "#{@directory}/config/android" unless File.exist? "#{@directory}/config/android"
-        Dir.mkdir "#{@directory}/config/ios" unless File.exist? "#{@directory}/config/ios"
+
+        ['android', 'ios', 'web'].each do |platform|
+            Dir.mkdir "#{@directory}/config/#{platform}" unless File.exist? "#{@directory}/config/#{platform}"
+        end
 
         puts colored :blue, "\n#{CHAR_FLAG} Copying configuration files"
         FileUtils.copy_entry File.join(File.dirname(__FILE__), '../templates/project/config'), "#{@directory}/config"
@@ -35,7 +37,7 @@ class Initializer
         configFile = YAML.load(File.read("#{@directory}/config/.config.yaml"))
         configFile['flavors'] = flavors
 
-        ['android', 'ios'].each do |platform|
+        ['android', 'ios', 'web'].each do |platform|
             # Remove redundant flavor file settings if present
             if configFile.key?(platform) && configFile[platform].key?('files')
                 configFile[platform]['files'].each do |key, value|
@@ -49,7 +51,14 @@ class Initializer
         ['test', 'accept', 'production', 'release'].each do |filename|
             # Check if the flavor is enabled, otherwise delete the file
             unless flavors.include? filename 
-                ["#{@directory}/config/#{filename}.json", "#{@directory}/config/android/#{filename}.json", "#{@directory}/config/ios/#{filename}.json"].each do |file|
+                files = [
+                    "#{@directory}/config/#{filename}.json", 
+                    "#{@directory}/config/android/#{filename}.json", 
+                    "#{@directory}/config/ios/#{filename}.json",
+                    "#{@directory}/config/web/#{filename}.json"
+                ]
+                
+                files.each do |file|
                     File.delete(file) unless !File.exist? file
                 end
             end

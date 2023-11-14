@@ -5,6 +5,7 @@ module Commands
             super 
 
             @profile = args[:profile]
+            @device = args[:device]
         end
 
         def execute
@@ -12,7 +13,8 @@ module Commands
             if @platform.nil?
                 @platform = @@prompt.select("Choose the platform", [
                     { name: 'iOS', value: 'ios' },
-                    { name: 'Android', value: 'android' }
+                    { name: 'Android', value: 'android' },
+                    { name: 'Web', value: 'web' }
                 ])
             end
 
@@ -20,7 +22,9 @@ module Commands
 
             select_device
 
-            command = "flutter run #{@platform} --target=lib/main.dart --dart-define-from-file=config/.build.json --device-id #{@device}"
+            destination = @platform != "web" ? @platform : ""
+
+            command = "flutter run #{destination} --target=lib/main.dart --dart-define-from-file=config/.build.json --device-id #{@device}"
             command += @release ? " --release" : ""
             command += @profile ? " --profile" : ""
 
@@ -31,6 +35,11 @@ module Commands
         end
 
         def select_device
+            unless @device.nil?
+                puts colored :blue, "\n#{CHAR_FLAG} Running app on: #{@device}"
+                return
+            end
+
             puts colored :blue, "\n#{CHAR_FLAG} Retrieving list of available devices"
 
             # Get devices
@@ -43,6 +52,7 @@ module Commands
             #     "SM S901B (mobile)         • RFCT712TPEX • android-arm64  • Android 13 (API 33)",
             #     "sdk gphone64 arm64 (mobile) • emulator-5554 • android-arm64  • Android 13 (API 33) (emulator)",
             #     "macOS (desktop)        • macos                                • darwin-arm64   • macOS 13.2.1 22D68 darwin-arm64\n"
+            #     "Chrome (web)           • chrome                               • web-javascript • Google Chrome 118.0.5993.88"
             # ]
 
             devices = []

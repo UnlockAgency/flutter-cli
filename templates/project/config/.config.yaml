@@ -23,3 +23,6 @@ android:
       accept: "firebase/google-services.json"
       production: "firebase/google-services.json"
       release: "firebase/google-services.json"
+
+web:
+  files: {}

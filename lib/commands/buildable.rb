@@ -55,7 +55,11 @@ module Commands
                 @configuration = YAML.load_file('config/.config.yaml')
             rescue
                 warn colored :yellow, "\n#{CHAR_WARNING} File config/.config.yaml doesn\'t exist, using empty configuration: {}"
-                @configuration = {"flavors": ["test", "accept", "production", "release"], "android" => {}, "ios" => {}}
+                @configuration = {"flavors": ["test", "accept", "production", "release"], "android" => {}, "ios" => {}, "web" => {}}
+            end
+
+            if @platform == "web" && @configuration.key?(@platform) == false
+                @configuration["web"] = {}
             end
 
             unless @configuration.key?(@platform)
@@ -82,8 +86,13 @@ module Commands
     files:
       "path/to/new_file"
         release: "path/to/copyable_file"
+
+  web:
+    files:
+      "path/to/new_file"
+        release: "path/to/copyable_file"
 TEXT
-                exit_now!('Update the config/.config.yaml file')
+                abort('Update the config/.config.yaml file')
             end
 
             # Older configuration files do not contain a flavors setup, override it:
@@ -117,7 +126,6 @@ TEXT
                     # file:
                     #     test: <x>
                     #     accept, production: <y>
-                    #     *: <z>
 
                     # We're going to split the accept and production keys into separate keys
                     addingFlavors = {}
