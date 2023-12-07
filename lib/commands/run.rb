@@ -6,6 +6,9 @@ module Commands
 
             @profile = args[:profile]
             @device = args[:device]
+
+            # Web
+            @@port = args[:port]
         end
 
         def execute
@@ -27,6 +30,10 @@ module Commands
             command = "flutter run #{destination} --target=lib/main.dart --dart-define-from-file=config/.build.json --device-id #{@device}"
             command += @release ? " --release" : ""
             command += @profile ? " --profile" : ""
+
+            unless @@port.nil?
+                command += " --web-port #{@@port}"
+            end
 
             puts colored :blue, "\n#{CHAR_FLAG} Running app in flavor: #{@flavor}"
             puts colored :default, "#{command}\n\n"

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.8.1
+
+### New features
+- Add port flag when running on web
+
 ## v1.8.0
 
 ### New features

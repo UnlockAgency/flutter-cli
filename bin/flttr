@@ -104,6 +104,9 @@ class App
     
     c.flag [:d, :device], 
       :desc => 'Specify a device ID to target'
+      
+    c.flag [:port], 
+      :desc => 'Specify the port to use: https://localhost:<port>'
 
     c.action do |global_options,options,args|
       Commands::Run.new(global_options.merge(options)).execute
