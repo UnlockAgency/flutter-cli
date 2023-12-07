@@ -7,8 +7,11 @@ module Commands
             @profile = args[:profile]
             @device = args[:device]
 
+            @@prepare = args['dry-run'] == true
+
             # Web
             @@port = args[:port]
+            @@renderer = args['web-renderer']
         end
 
         def execute
@@ -33,6 +36,16 @@ module Commands
 
             unless @@port.nil?
                 command += " --web-port #{@@port}"
+            end
+
+            unless @@renderer.nil?
+                command += " --web-renderer #{@@renderer}"
+            end
+
+            if @@prepare
+                puts colored :blue, "\n#{CHAR_FLAG} Skipping actual run in dry-run mode"
+                puts colored :default, "#{command}\n\n"
+                return
             end
 
             puts colored :blue, "\n#{CHAR_FLAG} Running app in flavor: #{@flavor}"

@@ -13,7 +13,10 @@ module Commands
             @@exportMethod = args['export-method']
 
             @@obfuscation = args['obfuscation'] == true
-            @@prepare = args['prepare'] == true
+            @@prepare = args['dry-run'] == true
+
+            # Web
+            @@renderer = args['web-renderer']
         end
 
         def execute
@@ -28,7 +31,7 @@ module Commands
             end
 
             if @@prepare
-                puts colored :blue, "\n#{CHAR_FLAG} Skipping actual build in prepare mode"
+                puts colored :blue, "\n#{CHAR_FLAG} Skipping actual build in dry-run mode"
                 puts colored :default, "#{command}\n\n"
                 return
             end
@@ -68,7 +71,13 @@ module Commands
         end
 
         def build_web
-            return "flutter build web --target=lib/main.dart --dart-define-from-file=config/.build.json"
+            command = "flutter build web --target=lib/main.dart --dart-define-from-file=config/.build.json"
+
+            unless @@renderer.nil?
+                command += " --web-renderer #{@@renderer}"
+            end
+
+            return command
         end
 
         def generate_ios_export_options

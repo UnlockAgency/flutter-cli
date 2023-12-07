@@ -86,30 +86,78 @@ class App
 
   desc 'Run on a device or simulator'
   command :run do |c|
-    c.flag [:p,:platform], 
-      :desc => 'Specify platform, android or ios', 
-      :must_match => ["android", "ios", "web"]
-
-    c.flag [:f,:flavor], 
-      :desc => 'Specify flavor' 
+    c.command :android do |sc|
+      sc.flag [:f,:flavor], 
+        :desc => 'Specify flavor' 
+        
+      sc.switch [:r,:release], 
+        :desc => 'Run in release mode, debug by default'
       
-    c.switch [:r,:release], 
-      :desc => 'Run in release mode, debug by default'
-    
-    c.switch [:profile], 
-      :desc => 'Run in profile mode, debug by default'
-    
-    c.switch [:prepare], 
-      :desc => 'Prepare only for running the app (writing config files)'
-    
-    c.flag [:d, :device], 
-      :desc => 'Specify a device ID to target'
+      sc.switch [:profile], 
+        :desc => 'Run in profile mode, debug by default'
       
-    c.flag [:port], 
-      :desc => 'Specify the port to use: https://localhost:<port>'
+      sc.switch ['dry-run'], 
+        :desc => 'Prepare only for running the app (writing config files)'
+      
+      sc.flag [:d, :device], 
+        :desc => 'Specify a device ID to target'
 
-    c.action do |global_options,options,args|
-      Commands::Run.new(global_options.merge(options)).execute
+      sc.action do |global_options,options,args|
+        mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'android'})
+        mergedOptions.delete(GLI::Command::PARENT)
+        Commands::Run.new(mergedOptions).execute
+      end
+    end
+
+    c.command :ios do |sc|
+      sc.flag [:f,:flavor], 
+        :desc => 'Specify flavor' 
+        
+      sc.switch [:r,:release], 
+        :desc => 'Run in release mode, debug by default'
+      
+      sc.switch [:profile], 
+        :desc => 'Run in profile mode, debug by default'
+      
+      sc.switch ['dry-run'], 
+        :desc => 'Prepare only for running the app (writing config files)'
+      
+      sc.flag [:d, :device], 
+        :desc => 'Specify a device ID to target'
+
+      sc.action do |global_options,options,args|
+        mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'ios'})
+        mergedOptions.delete(GLI::Command::PARENT)
+        Commands::Run.new(mergedOptions).execute
+      end
+    end
+
+    c.command :web do |sc|
+      sc.flag [:f,:flavor], 
+        :desc => 'Specify flavor'
+        
+      sc.switch [:r,:release], 
+        :desc => 'Run in release mode, debug by default'
+      
+      sc.switch ['dry-run'], 
+        :desc => 'Prepare only for running the app (writing config files)'
+      
+      sc.flag [:d, :device], 
+        :desc => 'Specify a device ID to target'
+        
+      sc.flag [:port], 
+        :desc => 'Specify the port to use: https://localhost:<port>'
+
+      sc.flag ['web-renderer'],
+        :desc => 'Specify the renderer',
+        :must_match => ['canvaskit', 'html', 'auto'],
+        :default_value => 'auto'
+
+      sc.action do |global_options,options,args|
+        mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'web'})
+        mergedOptions.delete(GLI::Command::PARENT)
+        Commands::Run.new(mergedOptions).execute
+      end
     end
   end
 
@@ -122,7 +170,7 @@ class App
       sc.flag [:f,:flavor], 
         :desc => 'Specify flavor'
       
-      sc.switch [:prepare], 
+      sc.switch ['dry-run'], 
         :desc => 'Prepare only for running the app (writing config files)',
         :negatable => false
 
@@ -148,7 +196,7 @@ class App
       sc.flag [:f,:flavor], 
         :desc => 'Specify flavor'
       
-      sc.switch [:prepare], 
+      sc.switch ['dry-run'], 
         :desc => 'Prepare only for running the app (writing config files)',
         :negatable => false
 
@@ -179,9 +227,14 @@ class App
       sc.flag [:f,:flavor], 
         :desc => 'Specify flavor'
       
-      sc.switch [:prepare], 
+      sc.switch ['dry-run'], 
         :desc => 'Prepare only for running the app (writing config files)',
         :negatable => false
+
+      sc.flag ['web-renderer'],
+        :desc => 'Specify the renderer',
+        :must_match => ['canvaskit', 'html', 'auto'],
+        :default_value => 'auto'
 
       sc.action do |global_options,options,args|
         mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'web'})

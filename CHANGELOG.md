@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## v1.8.2
+
+### New features
+- Add web-renderer flag: auto, canvaskit or html
+
+
+### Breaking changes 
+The `run` command has been updated. Previously:
+
+```shell
+flttr run --platform ios --flavor accept
+flttr run --platform android --flavor accept
+flttr run --platform web --flavor accept
+```
+
+Currently:
+
+```shell
+flttr run ios --flavor accept
+flttr run android --flavor accept
+flttr run web --flavor accept
+```
+
 ## v1.8.1
 
 ### New features
@@ -24,7 +47,6 @@
 ## v1.7.0
 
 ### Breaking changes
-
 Updated build commands, see README.md for new format and argument descriptions. 
 
 **Previously:**
@@ -35,6 +57,6 @@ flttr build --platform android [--flavor=] [--artifact=] [--release] [--[no-]obf
 
 **New:**
 ```
-flttr build ios [--flavor=] [--release] [--archive] [--export-method=] [--[no-]obfuscation] [--[no-]codesign] [--prepare]
-flttr build android [--flavor=] [--release] [--artifact=] [--[no-]obfuscation] [--prepare]
+flttr build ios [--flavor=] [--release] [--archive] [--export-method=] [--[no-]obfuscation] [--[no-]codesign] [--dry-run]
+flttr build android [--flavor=] [--release] [--artifact=] [--[no-]obfuscation] [--dry-run]
 ```
