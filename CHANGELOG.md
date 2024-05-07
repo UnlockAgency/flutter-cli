@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.8.3
+- Added da_DK as supported languages (Danish)
+
 ## v1.8.2
 
 ### New features

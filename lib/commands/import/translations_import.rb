@@ -75,7 +75,7 @@ module Commands
         def parse(translations)
             puts colored :blue, "\n#{CHAR_FLAG} Parsing translations"
             
-            allowedLocales = [ "da", "de", "el", "en-AU", "en-CA", "en-GB", "en-US", "es", "es-MX", "fi", "fr-CA", "fr", "id", "it", "ja", "ko", "ms", "nl", "no", "pt-BR", "pt", "ru", "sv", "th", "tr", "vi", "zh-Hans", "zh-Hant", "appleTV", "iMessage", "default" ]
+            allowedLocales = [ "da", "da_DK", "de", "el", "en-AU", "en-CA", "en-GB", "en-US", "es", "es-MX", "fi", "fr-CA", "fr", "id", "it", "ja", "ko", "ms", "nl", "no", "pt-BR", "pt", "ru", "sv", "th", "tr", "vi", "zh-Hans", "zh-Hant", "appleTV", "iMessage", "default" ]
             allowedLocales.each { |loc| 
               if loc.length == 2
                 allowedLocales << "#{loc}-#{loc.upcase}"
