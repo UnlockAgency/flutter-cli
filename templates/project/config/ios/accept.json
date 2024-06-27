@@ -1,7 +1,8 @@
 {
     "default": {
         "PRODUCT_BUNDLE_IDENTIFIER": "",
-        "DEVELOPMENT_TEAM": ""
+        "DEVELOPMENT_TEAM": "",
+        "CODE_SIGN_STYLE": "Manual"
     },
     "debug": {
         "PROVISIONING_PROFILE_SPECIFIER": "",

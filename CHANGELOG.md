@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.9.0
+- Use Environment.xcconfig instead of Generated.xcconfig
+
 ## v1.8.3
 - Added da_DK as supported languages (Danish)
 

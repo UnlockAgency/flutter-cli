@@ -209,10 +209,10 @@ TEXT
         end
 
         def update_xcconfig(buildConfig)
-            # Before running the build, we are updating values inside Generated.xcconfig.
+            # Before running the build, we are updating values inside Environment.xcconfig.
             # Flutter is also doing this later when running the build script, but some values are then representing the old ones.
             # We need specific values to be updated before starting flutters own build script.
-            xcconfigFileName = 'ios/Flutter/Generated.xcconfig'
+            xcconfigFileName = 'ios/Flutter/Environment.xcconfig'
 
             unless File.exist? "ios"
                 warn colored :yellow, "\n#{CHAR_WARNING} No iOS folder is present in the directory, make sure you're running the command from inside a projects root" 
@@ -234,21 +234,21 @@ TEXT
                 end
             end
 
-            puts colored :default, "#{CHAR_VERBOSE} Overriding the values in Generated.xcconfig to the build configuration" unless !$verbose
+            puts colored :default, "#{CHAR_VERBOSE} Overriding the values in Environment.xcconfig to the build configuration" unless !$verbose
 
             # Now overwrite the existing keys with our noewly created buildConfig
             for key in buildConfig.keys
                 generatedXcodeConfig[key] = buildConfig[key]
             end
 
-            puts colored :blue, "\n#{CHAR_FLAG} Writing to Generated.xcconfig"
+            puts colored :blue, "\n#{CHAR_FLAG} Writing to Environment.xcconfig"
 
-            # Now print all lines back into Generated.xcconfig
+            # Now print all lines back into Environment.xcconfig
             File.open(xcconfigFileName, "w") do |file|
                 for key in generatedXcodeConfig.keys
                     line = "#{key}#{key.start_with?("//") ? "" : "=#{generatedXcodeConfig[key]}"}"
 
-                    puts colored :default, "#{CHAR_VERBOSE} Writing into Generated.xcconfig: #{line}" unless !$verbose
+                    puts colored :default, "#{CHAR_VERBOSE} Writing into Environment.xcconfig: #{line}" unless !$verbose
 
                     file.write "#{line}\n"
                 end
