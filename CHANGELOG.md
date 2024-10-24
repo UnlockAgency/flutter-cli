@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.10.0
+- Added a check to avoid using xcode-select if platform is android
+
 ## v1.9.0
 - Use Environment.xcconfig instead of Generated.xcconfig
 

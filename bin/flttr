@@ -252,9 +252,12 @@ class App
   end
 
   pre do |global,command,options,args|
+    $default_xcode_location = nil
 
-    # Save the current Xcode location
-    $default_xcode_location = `xcode-select -print-path`.gsub("\n", "")
+    if @platform == "ios"
+      # Save the current Xcode location
+      $default_xcode_location = `xcode-select -print-path`.gsub("\n", "")
+    end
 
     # Set verbose logging
     $verbose = global[:verbose]
