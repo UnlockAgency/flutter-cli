@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.10.1
+- Now uses sub command to check if build is for iOS
+
 ## v1.10.0
 - Added a check to avoid using xcode-select if platform is android
 
