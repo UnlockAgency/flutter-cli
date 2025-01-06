@@ -75,7 +75,7 @@ module Commands
         def parse(translations)
             puts colored :blue, "\n#{CHAR_FLAG} Parsing translations"
             
-            allowedLocales = [ "da", "da_DK", "de", "el", "en-AU", "en-CA", "en-GB", "en-US", "es", "es-MX", "fi", "fr-CA", "fr", "id", "it", "ja", "ko", "ms", "nl", "no", "pt-BR", "pt", "ru", "sv", "th", "tr", "vi", "zh-Hans", "zh-Hant", "appleTV", "iMessage", "default" ]
+            allowedLocales = [ "nl-BE", "de-CH", "fr-BE", "da", "da_DK", "de", "de-AT", "de_AT", "el", "en-AU", "en-CA", "en-GB", "en-US", "es", "es-MX", "fi", "fr-CA", "fr", "id", "it", "ja", "ko", "ms", "nl", "no", "pt-BR", "pt", "ru", "sv", "th", "tr", "vi", "zh-Hans", "zh-Hant", "appleTV", "iMessage", "default" ]
             allowedLocales.each { |loc| 
               if loc.length == 2
                 allowedLocales << "#{loc}-#{loc.upcase}"
@@ -135,8 +135,8 @@ module Commands
 
                         # Last check if we are able to handle the locale
                         if !allowedLocales.include?(localeWithDash) && !allowedLocales.include?(locale)
-                        unless handled_unsupported_locals.include?(locale)
-                            handled_unsupported_locals << locale
+                        unless handledUnsupportedLocals.include?(locale)
+                            handledUnsupportedLocals << locale
                             warn colored :red, "#{CHAR_WARNING} Warning: Unsupported appstore locale: '#{localeWithDash}'"
                         end
                         next

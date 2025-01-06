@@ -1,3 +1,3 @@
 module Flttr
-  VERSION = '1.10.1'
+  VERSION = '1.10.3'
 end
