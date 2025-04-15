@@ -261,7 +261,7 @@ TEXT
             xcode_location = Settings.get('xcode_location')
             unless xcode_location.nil? || $default_xcode_location.include?(xcode_location)
                 puts colored :default, "#{CHAR_VERBOSE} Switching to: #{xcode_location}" unless !$verbose
-                system("sudo xcode-select -s #{xcode_location}")
+                # system("sudo xcode-select -s #{xcode_location}")
             end
             
             puts colored :default, "#{CHAR_VERBOSE} Selected version is:"

@@ -282,12 +282,12 @@ class App
 
   post do |global,command,options,args|
     # Revert the Xcode location to the default
-    system("sudo xcode-select -s #{$default_xcode_location}") unless $default_xcode_location.nil?
+    # system("sudo xcode-select -s #{$default_xcode_location}") unless $default_xcode_location.nil?
   end
   
   on_error do |exception|
     # Error logic here
-    system("sudo xcode-select -s #{$default_xcode_location}") unless $default_xcode_location.nil?
+    # system("sudo xcode-select -s #{$default_xcode_location}") unless $default_xcode_location.nil?
 
     true
   end
