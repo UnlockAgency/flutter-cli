@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flttr (1.9.0)
+    flttr (1.10.4)
       dotenv (~> 2.8.1)
       gli (~> 2.21.0)
       jwt (~> 2.7.0)

@@ -109,7 +109,7 @@ module Commands
 
                     text = languageTranslation["value"] || ""
                     line = {'key' => key, 'translation' => text}
-                    filenameSuffix = locale.split('_')[0]
+                    filenameSuffix = locale
 
                     case type
                     when "store"
@@ -172,6 +172,27 @@ module Commands
                     end
                 end
             end
+
+        # Add fallback files for region-specific locales if base doesn't exist
+        arb_locales = filesToWrite.keys.select { |f| f.end_with?('.arb') }
+        locale_bases = arb_locales.map { |f| f.match(/app_(.+)\.arb/)[1] rescue nil }.compact
+
+        # Map from region-specific (like 'da_DK') to base ('da')
+        region_locales = locale_bases.select { |l| l.include?('_') }
+        region_locales.each do |region_locale|
+            base_locale = region_locale.split('_')[0]
+            base_file = "#{TRANSLATIONS_PATH}/app_#{base_locale}.arb"
+
+            unless locale_bases.include?(base_locale)
+                puts colored :yellow, "#{CHAR_WARNING} Creating fallback ARB for #{base_locale}"
+
+                # Copy the region-specific file as the base
+                filesToWrite[base_file] = filesToWrite["#{TRANSLATIONS_PATH}/app_#{region_locale}.arb"].dup
+
+                # Optionally, add the @@locale key
+                filesToWrite[base_file]["@@locale"] = base_locale
+            end
+        end
 
             return filesToWrite
         end

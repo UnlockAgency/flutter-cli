@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.10.4
+- Added language code support
+
 ## v1.10.3
 - Added new translations for Budiyu support
 
