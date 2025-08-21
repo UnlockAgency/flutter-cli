@@ -15,8 +15,6 @@ module Commands
             @@obfuscation = args['obfuscation'] == true
             @@prepare = args['dry-run'] == true
 
-            # Web
-            @@renderer = args['web-renderer']
         end
 
         def execute
@@ -72,10 +70,6 @@ module Commands
 
         def build_web
             command = "flutter build web --target=lib/main.dart --dart-define-from-file=config/.build.json"
-
-            unless @@renderer.nil?
-                command += " --web-renderer #{@@renderer}"
-            end
 
             return command
         end

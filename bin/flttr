@@ -148,11 +148,6 @@ class App
       sc.flag [:port], 
         :desc => 'Specify the port to use: https://localhost:<port>'
 
-      sc.flag ['web-renderer'],
-        :desc => 'Specify the renderer',
-        :must_match => ['canvaskit', 'html', 'auto'],
-        :default_value => 'auto'
-
       sc.action do |global_options,options,args|
         mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'web'})
         mergedOptions.delete(GLI::Command::PARENT)
@@ -230,11 +225,6 @@ class App
       sc.switch ['dry-run'], 
         :desc => 'Prepare only for running the app (writing config files)',
         :negatable => false
-
-      sc.flag ['web-renderer'],
-        :desc => 'Specify the renderer',
-        :must_match => ['canvaskit', 'html', 'auto'],
-        :default_value => 'auto'
 
       sc.action do |global_options,options,args|
         mergedOptions = global_options.merge(**options, **options[GLI::Command::PARENT], **{'platform': 'web'})

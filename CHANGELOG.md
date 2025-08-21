@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.10.5
+- Removed web-renderer from web build and run
+
 ## v1.10.4
 - Added language code support
 

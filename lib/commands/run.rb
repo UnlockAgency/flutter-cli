@@ -11,7 +11,6 @@ module Commands
 
             # Web
             @@port = args[:port]
-            @@renderer = args['web-renderer']
         end
 
         def execute
@@ -36,10 +35,6 @@ module Commands
 
             unless @@port.nil?
                 command += " --web-port #{@@port}"
-            end
-
-            unless @@renderer.nil?
-                command += " --web-renderer #{@@renderer}"
             end
 
             if @@prepare
