@@ -109,7 +109,8 @@ module Commands
 
                     text = languageTranslation["value"] || ""
                     line = {'key' => key, 'translation' => text}
-                    filenameSuffix = locale
+                    # filenameSuffix = locale //TODO: test
+                    filenameSuffix = normalize_flutter_locale(locale)
 
                     case type
                     when "store"
@@ -196,7 +197,17 @@ module Commands
 
             return filesToWrite
         end
+        def normalize_flutter_locale(locale)
+            return locale if locale.nil?
 
+            parts = locale.split(/[-_]/)
+
+            if parts.length == 1
+                parts[0].downcase
+            else
+              "#{parts[0].downcase}_#{parts[1].upcase}"
+            end
+        end
         def write(files)
             puts colored :blue, "\n#{CHAR_FLAG} Writing files"
 

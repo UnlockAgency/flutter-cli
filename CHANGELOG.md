@@ -1,5 +1,9 @@
 # CHANGELOG
 
+
+## v1.10.6
+- Translations now turns nl-NL to nl_NL for Flutter
+
 ## v1.10.5
 - Removed web-renderer from web build and run
 
